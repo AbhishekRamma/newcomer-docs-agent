@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"Asks about the general time limit for Ontario's graduated licensing system, which official government pages cover.\"}",
+ "usage": {
+  "prompt_tokens": 274,
+  "completion_tokens": 33,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 146
+ }
+}

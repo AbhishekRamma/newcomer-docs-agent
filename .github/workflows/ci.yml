@@ -1,0 +1,40 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: rag
+          POSTGRES_PASSWORD: rag
+          POSTGRES_DB: rag
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U rag"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://rag:rag@localhost:5432/rag
+      EMBED_PROVIDER: cached
+      EMBED_CACHE_PATH: ci/fixtures/embed_cache.sqlite
+      LLM_PROVIDER: cached
+      LLM_CACHE_DIR: ci/fixtures/llm_cache
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Install (no embedding model; CI replays cached vectors)
+        run: uv sync --python 3.11 --extra dev --frozen
+      - name: Lint
+        run: uv run ruff check .
+      - name: Unit tests
+        run: uv run pytest -q
+      - name: Ingest fixture pages
+        run: uv run python -m src.ingest --fixtures ci/fixtures/docs --sizes 500
+      - name: Dev evaluation gate (cached LLM and embeddings)
+        run: uv run python -m src.evaluate --split dev --name ci-replay --gate ci/thresholds.json

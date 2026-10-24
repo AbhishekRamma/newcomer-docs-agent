@@ -1,0 +1,22 @@
+[
+  {"id": "s01", "topic": "sin", "owner": "Employment and Social Development Canada (Service Canada)", "url": "https://www.canada.ca/en/employment-social-development/services/sin.html"},
+  {"id": "s02", "topic": "sin", "owner": "Employment and Social Development Canada (Service Canada)", "url": "https://www.canada.ca/en/employment-social-development/services/sin/apply.html"},
+  {"id": "s03", "topic": "sin", "owner": "Employment and Social Development Canada (Service Canada)", "url": "https://www.canada.ca/en/employment-social-development/services/sin/required-documents.html"},
+  {"id": "s04", "topic": "ohip", "owner": "Government of Ontario, Ministry of Health / ServiceOntario", "url": "https://www.ontario.ca/page/apply-ohip-and-get-health-card"},
+  {"id": "s05", "topic": "ohip", "owner": "Government of Ontario, Ministry of Health", "url": "https://www.ontario.ca/page/what-ohip-covers"},
+  {"id": "s06", "topic": "ohip", "owner": "Government of Ontario, Ministry of Health / ServiceOntario", "url": "https://www.ontario.ca/page/health-card-renewal"},
+  {"id": "s07", "topic": "ohip", "owner": "Government of Ontario, Ministry of Health", "url": "https://www.ontario.ca/page/ohip-coverage-while-outside-canada"},
+  {"id": "s08", "topic": "banking", "owner": "Financial Consumer Agency of Canada", "url": "https://www.canada.ca/en/financial-consumer-agency/services/banking/opening-bank-account.html"},
+  {"id": "s09", "topic": "banking", "owner": "Financial Consumer Agency of Canada", "url": "https://www.canada.ca/en/financial-consumer-agency/services/banking/bank-accounts/low-cost-no-cost.html"},
+  {"id": "s10", "topic": "tax", "owner": "Canada Revenue Agency", "url": "https://www.canada.ca/en/revenue-agency/services/tax/international-non-residents/individuals-leaving-entering-canada-non-residents/newcomers-canada-immigrants.html"},
+  {"id": "s11", "topic": "tax", "owner": "Canada Revenue Agency", "url": "https://www.canada.ca/en/revenue-agency/services/tax/international-non-residents/individuals-leaving-entering-canada-non-residents/newcomers-canada-immigrants/completing-return-newcomers.html"},
+  {"id": "s12", "topic": "tax", "owner": "Canada Revenue Agency", "url": "https://www.canada.ca/en/services/taxes/income-tax/personal-income-tax/who-should-file-tax.html"},
+  {"id": "s13", "topic": "tax", "owner": "Canada Revenue Agency", "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/important-dates-individuals.html"},
+  {"id": "s14", "topic": "tax", "owner": "Canada Revenue Agency", "url": "https://www.canada.ca/en/revenue-agency/news/newsroom/tax-tips/tax-tips-2026/tax-tip-taxes-made-simple-newcomers-canada.html"},
+  {"id": "s15", "topic": "tax", "owner": "Canada Revenue Agency", "url": "https://www.canada.ca/en/revenue-agency/services/child-family-benefits/canada-groceries-essentials-benefit/who-eligible.html"},
+  {"id": "s16", "topic": "tax", "owner": "Canada Revenue Agency", "url": "https://www.canada.ca/en/revenue-agency/services/child-family-benefits/canada-groceries-essentials-benefit/get-benefit.html"},
+  {"id": "s17", "topic": "driving", "owner": "Government of Ontario, Ministry of Transportation", "url": "https://www.ontario.ca/page/exchange-out-province-drivers-licence"},
+  {"id": "s18", "topic": "driving", "owner": "Government of Ontario, Ministry of Transportation", "url": "https://www.ontario.ca/page/get-g-drivers-licence-new-drivers"},
+  {"id": "s19", "topic": "driving", "owner": "Government of Ontario, Ministry of Transportation", "url": "https://www.ontario.ca/document/official-mto-drivers-handbook/getting-your-drivers-licence"},
+  {"id": "s20", "topic": "id", "owner": "Government of Ontario / ServiceOntario", "url": "https://www.ontario.ca/page/ontario-photo-card"}
+]

@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"Asks a general factual rule about acceptable translators for a SIN application.\"}",
+ "usage": {
+  "prompt_tokens": 273,
+  "completion_tokens": 27,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 145
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"The maximum monthly fee is no more than $4 a month [s09-c500-000]. There is no minimum balance requirement for this kind of account [s09-c500-000].\"}",
+ "usage": {
+  "prompt_tokens": 606,
+  "completion_tokens": 51,
+  "prompt_cache_hit_tokens": 384,
+  "prompt_cache_miss_tokens": 222
+ }
+}

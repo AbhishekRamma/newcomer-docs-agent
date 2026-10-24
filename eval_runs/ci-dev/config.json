@@ -1,0 +1,32 @@
+{
+  "split": "dev",
+  "n_questions": 40,
+  "questions_sha256": "a4b74eac674db9c2396eacfdf1cb546006f56427ee535caf6219774121379d60",
+  "settings": {
+    "index": "c500",
+    "top_k": 5,
+    "hybrid": true,
+    "verify": true,
+    "model": "deepseek-flash",
+    "llm_provider": "live",
+    "embed_provider": "local",
+    "llm_cache_dir": "ci/fixtures/llm_cache",
+    "embed_cache_path": "ci/fixtures/embed_cache.sqlite"
+  },
+  "git_commit": "uncommitted",
+  "bootstrap": {
+    "resamples": 10000,
+    "seed": 42
+  },
+  "served_models": [
+    "deepseek-flash"
+  ],
+  "llm_cache": {
+    "hits": 0,
+    "misses": 97,
+    "live_calls": 97
+  },
+  "est_cost_usd_peak_this_run": 0.010413,
+  "elapsed_s": 100.3,
+  "timestamp": "2026-10-24T15:32:02-0400"
+}

@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"A bank may refuse to open an account in some cases [s08-c500-001]. If it refuses, it must give you written notice of the refusal [s08-c500-001]. The bank must keep records related to the refusal for 7 years [s08-c500-001].\"}",
+ "usage": {
+  "prompt_tokens": 602,
+  "completion_tokens": 73,
+  "prompt_cache_hit_tokens": 384,
+  "prompt_cache_miss_tokens": 218
+ }
+}

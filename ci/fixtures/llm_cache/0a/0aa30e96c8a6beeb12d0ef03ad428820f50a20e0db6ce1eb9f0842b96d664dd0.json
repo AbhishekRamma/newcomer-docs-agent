@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"General factual question about tax filing and benefits options when a SIN cannot be issued, answerable by official government pages.\"}",
+ "usage": {
+  "prompt_tokens": 280,
+  "completion_tokens": 36,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 152
+ }
+}

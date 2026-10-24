@@ -1,0 +1,33 @@
+# docker compose up  ->  Postgres + pgvector, then the app builds the c500 index and serves
+# POST /ask and GET /health on http://localhost:8000.
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: rag
+      POSTGRES_PASSWORD: rag   # local demo only
+      POSTGRES_DB: rag
+    ports:
+      - "${DB_PORT:-5434}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rag -d rag"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - path: .env          # DEEPSEEK_API_KEY lives here; the file is gitignored
+        required: false
+    environment:
+      DATABASE_URL: postgresql://rag:rag@db:5432/rag
+      LLM_PROVIDER: ${LLM_PROVIDER:-live}
+    ports:
+      - "8000:8000"
+    volumes:
+      # raw pages, embedding cache, LLM cache and spend ledger stay on the host, never in git
+      - ./data/local:/app/data/local

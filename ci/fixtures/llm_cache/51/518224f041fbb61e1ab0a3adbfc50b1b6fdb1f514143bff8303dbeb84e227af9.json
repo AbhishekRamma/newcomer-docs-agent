@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"Asks a general factual question about a federal benefit amount related to filing a first Canadian tax return.\"}",
+ "usage": {
+  "prompt_tokens": 281,
+  "completion_tokens": 33,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 153
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"Asks about general Ontario G1 driver licence rules, a covered driver's licence topic.\"}",
+ "usage": {
+  "prompt_tokens": 274,
+  "completion_tokens": 31,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 146
+ }
+}
