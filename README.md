@@ -4,6 +4,7 @@
 - **Stack:** Python 3.11, LangGraph, FastAPI, Pydantic, PostgreSQL + pgvector, local `BAAI/bge-small-en-v1.5` embeddings, DeepSeek (`deepseek-flash`) through its OpenAI-compatible API, pytest, Docker Compose, GitHub Actions.
 - **Best held-out result (frozen test set, run once):** all key facts present in 77.3% of answerable questions (95% bootstrap CI 59.1–90.9%, n=22); refusal accuracy 90.0% (CI 76.7–100%, n=30); every answered, answerable question cited an expected source (n=19).
 - **Run:** `uv sync --extra embed --extra dev` → `python -m src.ingest` → `python -m src.graph "How do I apply for a SIN?"` or `docker compose up` (see [Run it](#run-it)); evaluate with `python -m src.evaluate --split dev`.
+- **Chat page:** open <http://localhost:8000/> once the API is running: a retro, frosted-glass page that shows cited answers, refusals with their route, and API health (see [Use the chat page](#use-the-chat-page)).
 - **Local-only:** page text, embedding and LLM caches, full answers and the spend ledger live in the gitignored `data/local/`; CI runs on paraphrased fixture pages with cached responses.
 
 ## The problem
@@ -83,6 +84,12 @@ curl -s localhost:8000/health
 curl -s -X POST localhost:8000/ask -H 'Content-Type: application/json' \
   -d '{"question": "How long can I drive in Ontario on a licence from another country?"}'
 ```
+
+### Use the chat page
+
+With the API running (`uv run uvicorn src.api:app` locally, or Docker as below), open <http://localhost:8000/>. Type a question and press Enter, or tap one of the example chips. Citation numbers link to the official page each sentence came from, and the sources list under the answer shows the page, section and fetch date. Refusals (out of scope, needs a professional, unclear, could not find it) show in an amber panel with their route label. The top strip shows `/health`. The page is plain HTML, CSS and JavaScript in `src/static/`, served by FastAPI, with no build step and nothing loaded from other sites.
+
+![The chat page refusing an out-of-scope question](docs/frontend.png)
 
 On my machine the default bridge network was broken, so I ran it with the host-network override: `docker compose -f docker-compose.yml -f docker-compose.hostnet.yml up` (details in [`docs/docker_evidence.md`](docs/docker_evidence.md)).
 

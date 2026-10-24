@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Newcomer Desk: Ontario settling-in questions, answered from official pages</title>
+  <meta name="description" content="Ask about SIN, OHIP, bank accounts, your first tax return or an Ontario driver's licence. Answers come only from official government pages, with citations.">
+  <link rel="stylesheet" href="/static/app.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Cpath fill='%23e86f4c' d='M1 0h6v1h1v6h-1v1h-6v-1h-1v-6h1z'/%3E%3Cpath fill='%23fff6e8' d='M2 2h4v1h-4zM2 4h3v1h-3z'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true">
+    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+  </div>
+  <div class="crt" aria-hidden="true"></div>
+
+  <header class="menubar glass" role="banner">
+    <span class="logo" aria-hidden="true"></span>
+    <span class="brand pixel">Newcomer Desk</span>
+    <p class="menu" aria-label="Topics covered">
+      <span>SIN</span><span>OHIP</span><span>Bank</span><span>Tax</span><span>Licence</span>
+    </p>
+    <span class="spacer"></span>
+    <span id="health" class="health" role="status" aria-live="polite">
+      <span class="dot" aria-hidden="true"></span><span class="label">checking…</span><span class="detail"></span>
+    </span>
+  </header>
+
+  <main class="window glass" aria-labelledby="title">
+    <div class="titlebar" aria-hidden="true"><span class="stripes"></span></div>
+    <h1 id="title" class="pixel">Ask about settling in Ontario</h1>
+    <p class="lede">Answers come only from 20 official Canada.ca and ontario.ca pages, and every sentence links to its source. If the pages don't say, or you need advice about your own situation, I'll tell you so instead of guessing.</p>
+
+    <p class="disclaimer" role="note">
+      <strong>Not legal, tax or immigration advice.</strong>
+      This is general information from official government pages. Check the linked page, or ask a licensed professional about your own case.
+    </p>
+
+    <section aria-label="Example questions">
+      <ul class="chips" id="chips">
+        <li><button type="button" class="chip" data-q="How do I apply for a Social Insurance Number?">SIN</button></li>
+        <li><button type="button" class="chip" data-q="Is there a waiting period before OHIP coverage starts?">OHIP</button></li>
+        <li><button type="button" class="chip" data-q="What ID do I need to open a bank account?">Bank account</button></li>
+        <li><button type="button" class="chip" data-q="Do I need to file a tax return in my first year in Canada?">First tax return</button></li>
+        <li><button type="button" class="chip" data-q="How long can I drive in Ontario on a licence from another country?">Driver's licence</button></li>
+      </ul>
+    </section>
+
+    <section id="log" class="log" aria-label="Conversation" aria-live="polite" aria-busy="false"></section>
+
+    <form id="ask" class="composer glass-inset" autocomplete="off">
+      <label for="q" class="visually-hidden">Your question</label>
+      <textarea id="q" name="q" rows="2" maxlength="500" required
+        placeholder="Ask a question. Enter sends, Shift+Enter adds a line."></textarea>
+      <button id="send" type="submit" class="gel">Ask</button>
+    </form>
+    <p class="fineprint">Each source shows the date its page was fetched. Pages change, so check the linked page before you act.</p>
+  </main>
+
+  <template id="tpl-user">
+    <article class="msg user"><p class="bubble"></p></article>
+  </template>
+  <template id="tpl-answer">
+    <article class="msg bot">
+      <div class="bubble glass-inset">
+        <p class="meta"><span class="tag"></span></p>
+        <p class="text"></p>
+        <div class="sources"><h2 class="pixel">Sources</h2><ol></ol></div>
+        <p class="disc"></p>
+      </div>
+    </article>
+  </template>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

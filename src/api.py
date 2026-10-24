@@ -1,8 +1,12 @@
-"""FastAPI service: POST /ask and GET /health."""
+"""FastAPI service: the chat page at /, POST /ask and GET /health."""
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from src.config import get_settings
@@ -10,7 +14,15 @@ from src.db import connect
 from src.graph import default_agent
 from src.llm import BudgetExceeded
 
+STATIC_DIR = Path(__file__).parent / "static"
+
 app = FastAPI(title="newcomer-docs-agent", version="0.1.0")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+
+@app.get("/", include_in_schema=False)
+def index() -> FileResponse:
+    return FileResponse(STATIC_DIR / "index.html", media_type="text/html")
 
 
 class AskRequest(BaseModel):
