@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import sqlite3
+import threading
 from pathlib import Path
 
 import numpy as np
@@ -33,7 +34,10 @@ class Embedder:
         self.provider = provider
         self.cache_path = Path(cache_path)
         self.cache_path.parent.mkdir(parents=True, exist_ok=True)
-        self.db = sqlite3.connect(str(self.cache_path))
+        # FastAPI runs sync endpoints in a thread pool, so the cache connection is shared
+        # across threads; a lock serialises access instead of sqlite's same-thread check.
+        self.db = sqlite3.connect(str(self.cache_path), check_same_thread=False)
+        self._lock = threading.RLock()
         self.db.execute("CREATE TABLE IF NOT EXISTS emb (key TEXT PRIMARY KEY, vec BLOB)")
         self._model = None
         self.hits = 0
@@ -53,6 +57,10 @@ class Embedder:
         return np.frombuffer(row[0], dtype=np.float32)
 
     def embed(self, texts: list[str], kind: str = "passage") -> np.ndarray:
+        with self._lock:
+            return self._embed(texts, kind)
+
+    def _embed(self, texts: list[str], kind: str) -> np.ndarray:
         if kind not in {"passage", "query"}:
             raise ValueError(kind)
         keys = [cache_key(t, kind) for t in texts]
