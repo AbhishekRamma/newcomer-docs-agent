@@ -1,0 +1,32 @@
+{
+  "split": "test",
+  "n_questions": 30,
+  "questions_sha256": "43c8eb99fec3dae8c7b4bbf9a528e120ea5ff67127642fd5e02de81a4922e931",
+  "settings": {
+    "index": "c500",
+    "top_k": 5,
+    "hybrid": true,
+    "verify": true,
+    "model": "deepseek-flash",
+    "llm_provider": "live",
+    "embed_provider": "local",
+    "llm_cache_dir": "/workspace/newcomer-docs-agent/data/local/llm_cache",
+    "embed_cache_path": "/workspace/newcomer-docs-agent/data/local/embed_cache.sqlite"
+  },
+  "git_commit": "eb62d08c75f98068f2c1ff09c1e50bddda174768",
+  "bootstrap": {
+    "resamples": 10000,
+    "seed": 42
+  },
+  "served_models": [
+    "deepseek-flash"
+  ],
+  "llm_cache": {
+    "hits": 0,
+    "misses": 69,
+    "live_calls": 69
+  },
+  "est_cost_usd_peak_this_run": 0.018887,
+  "elapsed_s": 75.8,
+  "timestamp": "2026-10-24T15:45:16-0400"
+}
