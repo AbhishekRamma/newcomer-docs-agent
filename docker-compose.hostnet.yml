@@ -1,0 +1,17 @@
+# Fallback for hosts where Docker's bridge network is broken (on my build box, containers
+# on the default compose network could not reach each other or resolve DNS).
+# Usage: docker compose -f docker-compose.yml -f docker-compose.hostnet.yml up
+# Both containers share the host's network: Postgres listens on 5434, the API on 8000.
+services:
+  db:
+    network_mode: host
+    ports: !reset []
+    command: ["postgres", "-p", "5434"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rag -d rag -p 5434"]
+
+  app:
+    network_mode: host
+    ports: !reset []
+    environment:
+      DATABASE_URL: postgresql://rag:rag@localhost:5434/rag
