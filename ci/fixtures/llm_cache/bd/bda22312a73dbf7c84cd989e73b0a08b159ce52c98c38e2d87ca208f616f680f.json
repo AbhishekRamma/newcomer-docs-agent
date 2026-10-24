@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"General factual question about OHIP eligibility rules that official government pages answer.\"}",
+ "usage": {
+  "prompt_tokens": 273,
+  "completion_tokens": 27,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 145
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"Renewing your health card is free; there is no fee [s06-c500-000]. Your new card is mailed to you and usually arrives in 4 to 6 weeks [s06-c500-000].\"}",
+ "usage": {
+  "prompt_tokens": 626,
+  "completion_tokens": 58,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 370
+ }
+}

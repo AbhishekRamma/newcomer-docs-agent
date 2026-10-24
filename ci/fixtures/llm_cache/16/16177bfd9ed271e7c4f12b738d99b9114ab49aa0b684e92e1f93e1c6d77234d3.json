@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"If Service Canada cannot give you a SIN, you can ask the Canada Revenue Agency (CRA) for a temporary tax number (TTN) to file your return and apply for benefits [s10-c500-001]. Newcomers can apply for benefit payments before they file their first tax return, using form RC151 or form RC66 [s10-c500-000]. A new resident without children applies with form RC151, or online through the CRA web form [s10-c500-000].\"}",
+ "usage": {
+  "prompt_tokens": 661,
+  "completion_tokens": 116,
+  "prompt_cache_hit_tokens": 512,
+  "prompt_cache_miss_tokens": 149
+ }
+}

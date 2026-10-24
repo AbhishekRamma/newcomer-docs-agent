@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"General factual question about SIN application fees that official government pages answer.\"}",
+ "usage": {
+  "prompt_tokens": 272,
+  "completion_tokens": 26,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 144
+ }
+}

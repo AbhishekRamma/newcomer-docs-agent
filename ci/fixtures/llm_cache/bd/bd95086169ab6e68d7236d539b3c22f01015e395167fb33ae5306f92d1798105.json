@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"Asks which form to use for a federal benefit tied to filing a first tax return, a covered topic.\"}",
+ "usage": {
+  "prompt_tokens": 284,
+  "completion_tokens": 35,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 156
+ }
+}

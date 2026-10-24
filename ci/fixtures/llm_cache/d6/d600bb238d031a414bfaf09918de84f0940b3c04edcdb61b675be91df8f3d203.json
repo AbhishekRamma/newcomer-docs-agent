@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"needs_professional\", \"reason\": \"Asks for advice on their own immigration status and PR implications, which requires a regulated professional.\"}",
+ "usage": {
+  "prompt_tokens": 289,
+  "completion_tokens": 34,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 161
+ }
+}

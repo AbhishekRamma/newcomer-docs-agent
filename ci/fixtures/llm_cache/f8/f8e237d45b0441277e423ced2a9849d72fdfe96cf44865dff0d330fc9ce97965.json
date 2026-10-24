@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"Ontario has removed the three-month wait, so there is no waiting period and eligible people are covered immediately once they qualify [s04-c500-000]. To qualify you must spend at least 153 days of every 12-month period physically in Ontario [s04-c500-000]. You also need to be in Ontario for 153 of your first 183 days after you become a resident [s04-c500-000].\"}",
+ "usage": {
+  "prompt_tokens": 587,
+  "completion_tokens": 100,
+  "prompt_cache_hit_tokens": 0,
+  "prompt_cache_miss_tokens": 587
+ }
+}

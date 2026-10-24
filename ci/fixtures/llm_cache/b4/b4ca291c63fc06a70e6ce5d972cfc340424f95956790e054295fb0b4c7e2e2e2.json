@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"needs_professional\", \"reason\": \"This asks for legal strategy and help with a dispute/court matter about eviction, which requires a legal professional.\"}",
+ "usage": {
+  "prompt_tokens": 285,
+  "completion_tokens": 38,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 157
+ }
+}

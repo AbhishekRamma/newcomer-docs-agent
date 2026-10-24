@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"General factual question about bank account opening rules and required notices in Ontario.\"}",
+ "usage": {
+  "prompt_tokens": 283,
+  "completion_tokens": 27,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 155
+ }
+}

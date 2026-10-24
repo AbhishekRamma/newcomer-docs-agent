@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"needs_professional\", \"reason\": \"Asks for personalized tax strategy on foreign rental income under a treaty, which requires professional advice.\"}",
+ "usage": {
+  "prompt_tokens": 286,
+  "completion_tokens": 34,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 158
+ }
+}

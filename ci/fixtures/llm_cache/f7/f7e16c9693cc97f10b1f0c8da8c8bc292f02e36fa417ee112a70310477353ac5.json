@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"General factual question about OHIP coverage that official government pages could answer.\"}",
+ "usage": {
+  "prompt_tokens": 271,
+  "completion_tokens": 27,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 143
+ }
+}
