@@ -29,7 +29,7 @@ class Settings:
     """Everything that changes a run's behaviour. Saved with every eval run."""
 
     index: str = field(default_factory=lambda: os.getenv("RAG_INDEX", "c500"))
-    top_k: int = field(default_factory=lambda: int(os.getenv("RAG_TOP_K", "5")))
+    top_k: int = field(default_factory=lambda: int(os.getenv("RAG_TOP_K", "1")))
     hybrid: bool = field(default_factory=lambda: _bool("RAG_HYBRID", True))
     verify: bool = field(default_factory=lambda: _bool("RAG_VERIFY", True))
     model: str = field(default_factory=lambda: os.getenv("DEEPSEEK_MODEL", "deepseek-flash"))
