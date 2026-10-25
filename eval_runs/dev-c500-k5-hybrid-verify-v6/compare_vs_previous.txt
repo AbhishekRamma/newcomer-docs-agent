@@ -1,0 +1,12 @@
+A = dev-c500-k5-hybrid-verify
+B = dev-c500-k5-hybrid-verify-v6
+(paired delta CI: 10,000 bootstrap resamples of question ids, seed 42)
+metric                    A           A 95% CI        B           B 95% CI  B-A (paired)             95% CI  n
+route_accuracy        0.975       [0.925, 1.0]      1.0         [1.0, 1.0]         0.025       [0.0, 0.075]  40
+recall_at_k          0.9821      [0.9464, 1.0]   0.9821      [0.9464, 1.0]           0.0         [0.0, 0.0]  28
+mrr                  0.9286   [0.8571, 0.9821]   0.9286   [0.8571, 0.9821]           0.0         [0.0, 0.0]  28
+fact_recall          0.9464      [0.8571, 1.0]      1.0         [1.0, 1.0]        0.0536      [0.0, 0.1429]  28
+facts_all            0.9286      [0.8214, 1.0]      1.0         [1.0, 1.0]        0.0714      [0.0, 0.1786]  28
+citation_url_hit        1.0         [1.0, 1.0]      1.0         [1.0, 1.0]           0.0         [0.0, 0.0]  27
+citation_support        1.0         [1.0, 1.0]      1.0         [1.0, 1.0]           0.0         [0.0, 0.0]  27
+refusal_accuracy      0.975       [0.925, 1.0]      1.0         [1.0, 1.0]         0.025       [0.0, 0.075]  40

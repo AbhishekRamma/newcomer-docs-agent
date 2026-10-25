@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"With a G1 you wait 12 months before the G2 road test, or eight months if you pass an approved driver education course [s18-c500-000][s19-c500-001]. You must finish the graduated licensing steps within five years [s18-c500-000].\"}",
+ "usage": {
+  "prompt_tokens": 683,
+  "completion_tokens": 72,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 555
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"General factual question about what OHIP covers.\"}",
+ "usage": {
+  "prompt_tokens": 395,
+  "completion_tokens": 22,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 139
+ }
+}

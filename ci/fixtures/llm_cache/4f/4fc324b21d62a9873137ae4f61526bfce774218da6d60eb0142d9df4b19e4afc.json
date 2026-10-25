@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"General factual question about Ontario driver's licence exchange rules that official government pages could answer.\"}",
+ "usage": {
+  "prompt_tokens": 400,
+  "completion_tokens": 30,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 144
+ }
+}

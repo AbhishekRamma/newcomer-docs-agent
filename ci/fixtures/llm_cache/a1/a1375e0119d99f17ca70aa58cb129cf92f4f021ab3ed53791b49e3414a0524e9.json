@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"Asks where to exchange an out-of-province or foreign driver's licence, a covered Ontario driver's licence topic.\"}",
+ "usage": {
+  "prompt_tokens": 403,
+  "completion_tokens": 37,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 147
+ }
+}

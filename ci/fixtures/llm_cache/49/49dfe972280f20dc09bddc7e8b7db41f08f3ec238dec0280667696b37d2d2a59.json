@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"General rule about wait times after failing an Ontario road test.\"}",
+ "usage": {
+  "prompt_tokens": 403,
+  "completion_tokens": 25,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 147
+ }
+}

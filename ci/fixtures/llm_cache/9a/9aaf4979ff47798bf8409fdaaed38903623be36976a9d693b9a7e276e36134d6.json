@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"General factual question about identity documents needed to open a bank account in Canada.\"}",
+ "usage": {
+  "prompt_tokens": 399,
+  "completion_tokens": 28,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 143
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"Asks about general options for filing taxes and benefits when a SIN cannot be issued, a covered topic.\"}",
+ "usage": {
+  "prompt_tokens": 404,
+  "completion_tokens": 34,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 148
+ }
+}

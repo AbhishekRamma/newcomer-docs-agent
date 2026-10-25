@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"out_of_scope\", \"reason\": \"U.S. visas are outside the covered Ontario newcomer topics.\"}",
+ "usage": {
+  "prompt_tokens": 400,
+  "completion_tokens": 26,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 144
+ }
+}

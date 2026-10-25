@@ -1,4 +1,5 @@
-"""Retrieval: exact cosine top-k over pgvector, optionally fused with Postgres full-text (RRF)."""
+"""Retrieval: exact cosine top-k over pgvector, optionally fused with Postgres full-text (RRF),
+optionally reranked by a cross-encoder."""
 
 from __future__ import annotations
 
@@ -10,6 +11,7 @@ from dataclasses import asdict, dataclass
 from src.config import DATA_DIR, Settings, get_settings
 from src.db import connect
 from src.embed import Embedder
+from src.rerank import Reranker
 
 RRF_K = 60
 CANDIDATES = 20
@@ -41,6 +43,8 @@ class Retriever:
         self.s = settings or get_settings()
         self.conn = conn or connect(self.s.database_url)
         self.embedder = embedder or Embedder(self.s.embed_cache_path, self.s.embed_provider)
+        self.reranker = (Reranker(self.s.rerank, self.s.rerank_cache_path, self.s.embed_provider)
+                         if self.s.rerank else None)
 
     def vector(self, query: str, k: int) -> list[Chunk]:
         q = self.embedder.embed_query(query)
@@ -67,6 +71,8 @@ class Retriever:
 
     def search(self, query: str, k: int | None = None) -> list[Chunk]:
         k = k or self.s.top_k
+        if self.reranker is not None:
+            return self.reranked(query, k)
         if not self.s.hybrid:
             return self.vector(query, k)
         vec = self.vector(query, CANDIDATES)
@@ -79,6 +85,23 @@ class Retriever:
                 by_id.setdefault(c.id, c)
         order = sorted(fused, key=lambda i: (-fused[i], i))[:k]
         return [Chunk(**{**asdict(by_id[i]), "score": fused[i]}) for i in order]
+
+
+    def reranked(self, query: str, k: int) -> list[Chunk]:
+        """Pool the top candidates from vector search (and full-text search when hybrid is on),
+        then order the whole pool by cross-encoder score. Pooling instead of fusing means a
+        chunk only one search found is not pushed down by rank fusion."""
+        pool: dict[str, Chunk] = {}
+        sources = [self.vector(query, CANDIDATES)]
+        if self.s.hybrid:
+            sources.append(self.keyword(query, CANDIDATES))
+        for ranked in sources:
+            for c in ranked:
+                pool.setdefault(c.id, c)
+        cands = sorted(pool.values(), key=lambda c: c.id)
+        scores = self.reranker.scores(query, [f"{c.heading}\n{c.text}" for c in cands])
+        order = sorted(zip(scores, cands, strict=True), key=lambda t: (-t[0], t[1].id))[:k]
+        return [Chunk(**{**asdict(c), "score": s}) for s, c in order]
 
 
 def retrieval_metrics(expected_urls: list[str], chunks: list[Chunk]) -> dict:

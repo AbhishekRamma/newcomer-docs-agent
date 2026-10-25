@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"General question about bank account opening rules and required notices, a covered topic.\"}",
+ "usage": {
+  "prompt_tokens": 407,
+  "completion_tokens": 28,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 151
+ }
+}

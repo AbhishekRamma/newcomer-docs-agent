@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"needs_professional\", \"reason\": \"Asks for a definitive personal determination of their own tax residency status, which depends on judging their specific circumstances.\"}",
+ "usage": {
+  "prompt_tokens": 415,
+  "completion_tokens": 37,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 159
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"needs_professional\", \"reason\": \"Asks for personal immigration advice on working status and PR impact, which requires judging their own case.\"}",
+ "usage": {
+  "prompt_tokens": 413,
+  "completion_tokens": 35,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 157
+ }
+}

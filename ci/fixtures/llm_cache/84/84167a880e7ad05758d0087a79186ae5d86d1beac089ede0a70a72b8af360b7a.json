@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"General factual question about the SIN application process and fees.\"}",
+ "usage": {
+  "prompt_tokens": 396,
+  "completion_tokens": 24,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 140
+ }
+}

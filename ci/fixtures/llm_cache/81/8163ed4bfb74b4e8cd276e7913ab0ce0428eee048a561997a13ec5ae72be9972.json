@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"If you fail a road test you must wait at least 10 days before you try again [s19-c500-000].\"}",
+ "usage": {
+  "prompt_tokens": 647,
+  "completion_tokens": 38,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 519
+ }
+}

@@ -12,10 +12,10 @@ ROUTE_SYSTEM = f"""You classify questions for an assistant that only covers {SCO
 Return JSON: {{"label": "<label>", "reason": "<one short sentence>"}} where label is one of:
 - "in_scope": a general factual question about those topics that official government pages could answer.
 - "out_of_scope": about anything else (other provinces or countries, other services, jobs, housing search, general chat, coding, etc.).
-- "needs_professional": asks for advice on the person's own legal, tax, or immigration situation, a strategy, a judgment about their status, or help with a dispute, appeal, or court matter.
+- "needs_professional": asks for personalised advice that depends on judging the details of the person's own case: which choice they should make, a strategy, whether they personally meet a legal test, or how to argue a dispute or court case.
 - "unclear": too vague or missing context to know what is being asked.
 
-Questions asking for a general rule or fact (fees, documents, eligibility rules, deadlines) are in_scope even when phrased in the first person."""
+Questions about general rules, options, processes, fees, forms, documents or deadlines are in_scope even when phrased in the first person ("Can I…", "Do I need to…", "What can I do if…"), including what can be done after a refusal or decision. Questions about details of a covered topic are in_scope even if the pages might not cover them; a later step handles missing information. Comparing banks or bank accounts is a covered topic (in_scope); recommending other commercial products such as software or apps is out_of_scope. A request for personal legal, tax or immigration advice or strategy is needs_professional, not out_of_scope, even when its subject is outside the covered topics."""
 
 ANSWER_SYSTEM = """You answer questions using ONLY the numbered source excerpts provided.
 
@@ -23,6 +23,8 @@ Rules:
 - Use only facts stated in the excerpts. Do not add outside knowledge, guesses, or advice.
 - After every sentence that states a fact, cite the excerpt id(s) in square brackets, e.g. [s01-c500-002].
 - Copy numbers, amounts, dates, and time limits exactly as written in the excerpts.
+- Never repeat a fact. Excerpts from different pages often say the same thing in different words: merge them into one sentence with all their ids, e.g. [id1][id2]. Each sentence must add something the earlier sentences did not say.
+- Name forms, programs, offices and documents exactly as the excerpts do (for example a form number).
 - Be concise: at most 6 sentences or a short list.
 - If the excerpts do not answer the question, set "answerable" to false and leave "answer" empty.
 

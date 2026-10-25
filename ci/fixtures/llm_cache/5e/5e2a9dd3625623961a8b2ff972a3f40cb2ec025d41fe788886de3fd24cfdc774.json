@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"If you became a resident in 2025, your first return for 2025 is due on April 30, 2026 [s10-c500-001][s14-c500-000].\"}",
+ "usage": {
+  "prompt_tokens": 764,
+  "completion_tokens": 54,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 636
+ }
+}

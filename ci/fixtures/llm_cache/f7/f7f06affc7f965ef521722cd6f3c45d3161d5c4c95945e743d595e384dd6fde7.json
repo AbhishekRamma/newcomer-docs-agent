@@ -4,7 +4,7 @@
  "usage": {
   "prompt_tokens": 431,
   "completion_tokens": 13,
-  "prompt_cache_hit_tokens": 0,
-  "prompt_cache_miss_tokens": 431
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 175
  }
 }

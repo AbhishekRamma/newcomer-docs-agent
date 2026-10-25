@@ -1,10 +1,10 @@
 {
-  "route_accuracy": 0.95,
+  "route_accuracy": 0.97,
   "recall_at_k": 0.95,
-  "mrr": 0.95,
-  "fact_recall": 0.93,
-  "facts_all": 0.92,
-  "citation_url_hit": 0.95,
-  "citation_support": 0.95,
-  "refusal_accuracy": 0.95
+  "mrr": 0.97,
+  "fact_recall": 0.97,
+  "facts_all": 0.96,
+  "citation_url_hit": 0.97,
+  "citation_support": 0.97,
+  "refusal_accuracy": 0.97
 }

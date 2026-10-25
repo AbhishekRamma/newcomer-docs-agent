@@ -1,8 +1,8 @@
 # Failure analysis
 
-Configuration for both splits: 500-token chunks, top 5, hybrid retrieval, verification on. Full answer text is kept locally in `data/local/eval_answers/` (it paraphrases government pages, so it is not committed); the per-question metrics are in `eval_runs/*/per_question.jsonl`.
+Configuration for both splits: 500-token chunks, top 5, hybrid retrieval, verification on. The first two sections cover the first version; the second round (new prompts and repeated-sentence removal) is at the end. Full answer text is kept locally in `data/local/eval_answers/` (it paraphrases government pages, so it is not committed); the per-question metrics are in `eval_runs/*/per_question.jsonl`.
 
-## Held-out test set (scored once, `--final`): 6 of 30 questions had a failure
+## Held-out test set, first run (`--final`): 6 of 30 questions had a failure
 
 | id | category / topic | what happened | failure type | the agent's answer was |
 |---|---|---|---|---|
@@ -34,3 +34,38 @@ Configuration for both splits: 500-token chunks, top 5, hybrid retrieval, verifi
 1. **Router:** give it explicit examples showing that a first-person question about a general rule ("I owned shares before I came…") is still `in_scope`, and route borderline cases to retrieval rather than refusing. This would address dev-14, test-02 and test-22. It would need re-tuning on dev and a fresh held-out set to measure honestly, because this test set has now been seen.
 2. **Retrieval:** only fuse full-text results when they agree with vector search, or weight the vector side higher in RRF (test-21); add a chunk-level recall metric beside the page-level one (test-01).
 3. **Scorer:** add an LLM or entailment judge for key facts as a second opinion beside the string match, and report both.
+
+## Second round
+
+Same retrieval (hybrid, no reranker); routing prompt v4, answer prompt v5, and repeated-sentence removal in the output node. Tuned on dev only.
+
+### Test set, second run (`--final`, once): 4 of 30 questions had a failure
+
+I only compared outcomes for the question ids already listed above; I did not read the new answers to the failing questions or change anything after the run.
+
+| id | first run | second run |
+|---|---|---|
+| test-02 | refused as `out_of_scope` | **fixed**: routed `in_scope`, all key facts present |
+| test-22 | refused as `needs_professional` | **fixed**: routed `in_scope`, all key facts present |
+| test-30 | right refusal, routed `out_of_scope` | unchanged: still `out_of_scope` instead of retrieval and "could not find" |
+| test-21 | retrieval miss from hybrid fusion | unchanged: still says it could not find the age (both runs also miss the spouse or common-law fact) |
+| test-01 | first-year waiver missing | unchanged |
+| test-16 | "temporary resident" wording missing | unchanged (scorer strictness) |
+
+No question that passed in the first run failed in the second. all-facts went from 17/22 to 19/22 and route accuracy from 27/30 to 29/30.
+
+**Why this is weaker evidence than it looks.** test-02 and test-22 are exactly the failures that led me to change the router. I tuned the wording on dev, but the target came from the test set, so those two fixes were partly expected. A fair estimate needs a new held-out set.
+
+### Dev, second round
+
+- **Fixed:** dev-14 (routing: options after an OHIP refusal are now `in_scope`) and dev-28 (the answer now names form RC151, after the "name forms exactly" rule).
+- **Routing overcorrection along the way:** prompt v2 sent dev-21 and dev-26 to `needs_professional` and dev-30 to `in_scope`; v3 sent dev-34 and dev-37 to `out_of_scope` instead of `needs_professional`, and dev-39 (comparing bank accounts) to `out_of_scope`. v4 fixed these with one sentence each, which is fitting to dev.
+- **Reranker:** `bge-reranker-base` reached recall@5 1.000 on dev but lost dev-05's vision-test fact end to end (and dev-28 as well with the hybrid pool), so it is off by default.
+- **Repeats:** the licence answer no longer repeats the 60-day rule; the `repeat_free` heuristic flags 1 of 28 dev answers and 3 of 21 test answers, but it is lexical and I have not read those flagged answers against the pages (not yet verified by me).
+
+### What I would fix next
+
+1. **A fresh held-out set** before claiming any more improvement.
+2. **test-30 style routing:** route questions about a covered benefit to retrieval even when the specific detail (future payment dates) is probably not on the pages, so the refusal is "could not find" rather than out of scope.
+3. **test-21 retrieval:** the reranker over the vector pool is the obvious candidate, but it lost on dev end to end, so it would need a larger dev set to justify.
+4. **test-01 chunk-level recall** and **test-16 scorer strictness**, as above.

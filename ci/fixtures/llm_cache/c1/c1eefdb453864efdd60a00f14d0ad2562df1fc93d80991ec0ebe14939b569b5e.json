@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"General factual question about documents needed for a SIN application, a covered topic.\"}",
+ "usage": {
+  "prompt_tokens": 400,
+  "completion_tokens": 28,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 144
+ }
+}

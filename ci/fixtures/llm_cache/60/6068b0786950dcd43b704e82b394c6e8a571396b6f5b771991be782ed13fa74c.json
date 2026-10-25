@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"OHIP does not cover prescription drugs that you take outside of hospital [s05-c500-000]. Some people can get help through the Ontario Drug Benefit program instead [s05-c500-000].\"}",
+ "usage": {
+  "prompt_tokens": 746,
+  "completion_tokens": 53,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 618
+ }
+}

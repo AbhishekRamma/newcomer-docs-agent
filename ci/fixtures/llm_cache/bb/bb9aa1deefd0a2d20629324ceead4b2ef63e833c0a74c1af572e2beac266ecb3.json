@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"If ServiceOntario decides you are not eligible, you can ask for a review of the decision [s04-c500-001]. After that you can appeal to the Health Services Appeal and Review Board [s04-c500-001]. Some cases can also go to the OHIP Eligibility Review Committee (OERC) [s04-c500-001].\"}",
+ "usage": {
+  "prompt_tokens": 752,
+  "completion_tokens": 84,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 624
+ }
+}

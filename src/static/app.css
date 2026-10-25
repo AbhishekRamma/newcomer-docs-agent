@@ -162,7 +162,7 @@ h1 {
 .msg.user { justify-content: flex-end; }
 .msg.user .bubble {
   margin: 0; max-width: 80%; padding: 10px 14px; border-radius: 18px 18px 4px 18px;
-  color: #fff; background: linear-gradient(to bottom, #f08a5d, var(--tangerine));
+  color: #fff; background: linear-gradient(to bottom, #b4441f, #a83c1a);  /* >= 5.5:1 with white */
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 6px 16px -8px rgba(160, 60, 30, 0.7);
   white-space: pre-wrap; overflow-wrap: anywhere;
 }
@@ -219,18 +219,19 @@ h1 {
   background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(36, 28, 43, 0.25); border-radius: 12px;
 }
 .composer textarea::placeholder { color: #6e6275; }
-.gel {   /* glossy gel button */
+.gel {   /* glossy gel button; every colour behind the label keeps white text >= 4.5:1 */
   font: 700 15px/1 var(--pixel); color: #fff; cursor: pointer;
-  padding: 14px 22px; border-radius: 999px; border: 1px solid #b8452a;
-  background: linear-gradient(to bottom, #ffa77f 0%, var(--tangerine) 52%, #c94a28 53%, #e8613c 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -3px 6px rgba(255, 210, 180, 0.5),
+  padding: 14px 22px; border-radius: 999px; border: 1px solid #8a3216;
+  background: linear-gradient(to bottom, #c2502c 0%, #b4441f 50%, #a83c1a 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), inset 0 -3px 6px rgba(255, 170, 130, 0.35),
               0 6px 14px -6px rgba(160, 60, 30, 0.8);
-  text-shadow: 0 1px 0 rgba(120, 30, 10, 0.6);
+  text-shadow: 0 1px 0 rgba(90, 20, 5, 0.6);
   position: relative; overflow: hidden;
 }
-.gel::before { content: ""; position: absolute; left: 10%; right: 10%; top: 2px; height: 45%;
-  border-radius: 999px; background: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.1)); }
-.gel:disabled { filter: grayscale(0.6) brightness(1.05); cursor: progress; }
+/* the gloss sits in the top band only, above the glyphs, so it never lightens the text area */
+.gel::before { content: ""; position: absolute; left: 12%; right: 12%; top: 2px; height: 9px;
+  border-radius: 999px; background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0)); }
+.gel:disabled { filter: grayscale(0.5); cursor: progress; }
 .fineprint { margin: 10px 0 0; font-size: 12px; color: var(--ink-soft); text-align: center; }
 
 /* ---------- accessibility ---------- */

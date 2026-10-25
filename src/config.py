@@ -31,6 +31,8 @@ class Settings:
     index: str = field(default_factory=lambda: os.getenv("RAG_INDEX", "c500"))
     top_k: int = field(default_factory=lambda: int(os.getenv("RAG_TOP_K", "5")))
     hybrid: bool = field(default_factory=lambda: _bool("RAG_HYBRID", True))
+    # Cross-encoder model name, or "" for no reranking.
+    rerank: str = field(default_factory=lambda: os.getenv("RAG_RERANK", ""))
     verify: bool = field(default_factory=lambda: _bool("RAG_VERIFY", True))
     model: str = field(default_factory=lambda: os.getenv("DEEPSEEK_MODEL", "deepseek-flash"))
     llm_provider: str = field(default_factory=lambda: os.getenv("LLM_PROVIDER", "live"))
@@ -46,6 +48,11 @@ class Settings:
     embed_cache_path: str = field(
         default_factory=lambda: os.getenv(
             "EMBED_CACHE_PATH", str(LOCAL_DIR / "embed_cache.sqlite")
+        )
+    )
+    rerank_cache_path: str = field(
+        default_factory=lambda: os.getenv(
+            "RERANK_CACHE_PATH", str(LOCAL_DIR / "rerank_cache.sqlite")
         )
     )
 

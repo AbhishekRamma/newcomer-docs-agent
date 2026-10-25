@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"Comparing banks and bank accounts for newcomers is a covered topic.\"}",
+ "usage": {
+  "prompt_tokens": 399,
+  "completion_tokens": 25,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 143
+ }
+}

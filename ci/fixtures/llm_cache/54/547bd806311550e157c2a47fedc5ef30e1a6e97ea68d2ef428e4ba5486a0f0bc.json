@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"A temporary resident applies with a primary document such as a work permit or a study permit that says the holder may work in Canada [s02-c500-000]. A visitor record can also be used when it states that the person may accept employment [s02-c500-000]. An original primary document that proves identity and status is required, for example a work permit, a study permit or a permanent resident card [s03-c500-000].\"}",
+ "usage": {
+  "prompt_tokens": 778,
+  "completion_tokens": 103,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 650
+ }
+}

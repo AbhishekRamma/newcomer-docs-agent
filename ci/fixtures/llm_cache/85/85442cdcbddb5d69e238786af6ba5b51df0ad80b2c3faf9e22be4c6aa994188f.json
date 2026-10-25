@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"This is a general factual question about Ontario's graduated licensing wait times, which official government pages cover.\"}",
+ "usage": {
+  "prompt_tokens": 405,
+  "completion_tokens": 33,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 149
+ }
+}

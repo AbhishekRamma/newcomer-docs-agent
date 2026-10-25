@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"Asks about general bank account fees and minimum balance rules, a covered topic.\"}",
+ "usage": {
+  "prompt_tokens": 406,
+  "completion_tokens": 29,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 150
+ }
+}
