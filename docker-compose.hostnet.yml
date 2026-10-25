@@ -1,7 +1,8 @@
 # Fallback for hosts where Docker's bridge network is broken (on my build box, containers
 # on the default compose network could not reach each other or resolve DNS).
 # Usage: docker compose -f docker-compose.yml -f docker-compose.hostnet.yml up
-# Both containers share the host's network: Postgres listens on 5434, the API on 8000.
+# Every container shares the host's network: Postgres on 5434, the API on 8000, Keycloak on
+# 8080 (plus its management port 9000) and the web app on 5173.
 services:
   db:
     network_mode: host
@@ -15,3 +16,12 @@ services:
     ports: !reset []
     environment:
       DATABASE_URL: postgresql://rag:rag@localhost:5434/rag
+      OIDC_JWKS_URL: http://localhost:8080/realms/newcomer/protocol/openid-connect/certs
+
+  keycloak:
+    network_mode: host
+    ports: !reset []
+
+  web:
+    network_mode: host
+    ports: !reset []

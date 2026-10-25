@@ -19,5 +19,6 @@ COPY data/sources.json data/sources.json
 COPY ci ./ci
 
 EXPOSE 8000
-# Build the c500 index (uses data/local/ if mounted: cached pages and embeddings), then serve.
-CMD ["sh", "-c", "python -m src.ingest --sizes 500 && uvicorn src.api:app --host 0.0.0.0 --port 8000"]
+# Apply SQL migrations (question_history), build the c500 index (uses data/local/ if mounted:
+# cached pages and embeddings), then serve.
+CMD ["sh", "-c", "python -m src.migrate && python -m src.ingest --sizes 500 && uvicorn src.api:app --host 0.0.0.0 --port 8000"]

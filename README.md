@@ -1,11 +1,25 @@
 # newcomer-docs-agent
 
-- **What it does:** answers Ontario newcomer questions (SIN, OHIP, bank account, first tax return, driver's licence) only from 20 official government pages, with an inline citation on every sentence, and refuses when the pages don't cover it or the question needs personal legal, tax or immigration advice.
-- **Stack:** Python 3.11, LangGraph, FastAPI, Pydantic, PostgreSQL + pgvector, local `BAAI/bge-small-en-v1.5` embeddings, DeepSeek (`deepseek-flash`) through its OpenAI-compatible API, pytest, Docker Compose, GitHub Actions.
+- **What it does:** answers Ontario newcomer questions (SIN, OHIP, bank account, first tax return, driver's licence) only from 20 official government pages, with an inline citation on every sentence, and refuses when the pages don't cover it or the question needs personal legal, tax or immigration advice. You sign in (OIDC) and each user gets their own saved question history.
+- **Stack:** React 18 + TypeScript (strict) + Vite web app with `oidc-client-ts` (Authorization Code + PKCE) against Keycloak; FastAPI validating RS256 JWTs with PyJWT; PostgreSQL + pgvector for the index and the per-user `question_history` table; Python 3.11, LangGraph, local `bge-small` embeddings, DeepSeek (`deepseek-flash`); pytest, Vitest + React Testing Library, ESLint, Docker Compose, GitHub Actions.
 - **Held-out result (frozen test set, second and last `--final` run):** all key facts present in 86.4% of answerable questions (95% bootstrap CI 72.7–100%, n=22), up from 77.3% in the first run; refusal accuracy 96.7% (CI 90.0–100%, n=30), up from 90.0%; every answered, answerable question cited an expected source (n=21). This test set had already been seen once, so the second run is not a clean held-out estimate (see [below](#held-out-test-set-30-questions-frozen-by-sha256)).
-- **Run:** `uv sync --extra embed --extra dev` → `python -m src.ingest` → `python -m src.graph "How do I apply for a SIN?"` or `docker compose up` (see [Run it](#run-it)); evaluate with `python -m src.evaluate --split dev`.
-- **Chat page:** open <http://localhost:8000/> once the API is running: a retro, frosted-glass page that shows cited answers, refusals with their route, and API health (see [Use the chat page](#use-the-chat-page)).
-- **Local-only:** page text, embedding and LLM caches, full answers and the spend ledger live in the gitignored `data/local/`; CI runs on paraphrased fixture pages with cached responses.
+- **Run:** `LLM_PROVIDER=cached sudo -E docker compose -f docker-compose.yml -f docker-compose.hostnet.yml up -d --build`, then open <http://localhost:5173> and sign in as `demo` / `demo-only-not-a-secret` (local demo credentials). See [Run it](#run-it).
+- **Not production-ready:** a local demo stack with demo credentials in the realm export, Keycloak in dev mode over plain http, and `AUTH_DISABLED=1` available for local evaluation and CI only (off by default). See [Security notes](#security-notes) and [`docs/auth_design.md`](docs/auth_design.md).
+
+![Chat page after signing in: a cited answer and a refusal with its route label](docs/web_chat.png)
+
+## Architecture
+
+```mermaid
+flowchart LR
+    B["Browser<br/>React + TS app (web/, nginx :5173)<br/>tokens in memory"] -- "1. redirect: Auth Code + PKCE (S256)" --> K["Keycloak :8080<br/>realm newcomer, public client web"]
+    K -- "2. code → tokens (RS256 JWT, aud newcomer-api)" --> B
+    B -- "3. Bearer token: POST /ask, GET/DELETE /history" --> A["FastAPI :8000<br/>src/auth.py validates sig, iss, aud, exp"]
+    A -. "JWKS (cached 5 min)" .-> K
+    A -- "user_sub-scoped SQL" --> P[("Postgres + pgvector<br/>chunks, question_history")]
+    A --> G["LangGraph agent<br/>route → retrieve → answer → verify"]
+    G --> P
+```
 
 ## The problem
 
@@ -28,7 +42,8 @@ flowchart LR
 - **Ingest** (`src/ingest.py`): fetches the 20 pages listed in [`data/SOURCES.md`](data/SOURCES.md), strips navigation, splits on headings first and then into chunks of at most ~500 tokens with 80 tokens of overlap, embeds them with bge-small (batches of 16) and stores them in pgvector. Each chunk keeps its heading path, URL and fetch date.
 - **Graph** (`src/graph.py`): a LangGraph `StateGraph` with the five nodes above. Route labels are `in_scope`, `out_of_scope`, `needs_professional` and `unclear`.
 - **LLM** (`src/llm.py`): one interface with a `live` provider (DeepSeek) and a `cached` replay provider. Every response is stored on disk under a sha256 of the model, messages and parameters; a spend ledger estimates cost from the token usage and refuses new live calls past $1.50.
-- **API** (`src/api.py`): `POST /ask` and `GET /health`.
+- **API** (`src/api.py`): `POST /ask` (token required; saves the exchange to the caller's history), `GET /history?limit=&offset=` (the caller's rows only, newest first), `DELETE /history/{id}` (404 for a row that isn't yours), `GET /me`, and a public `GET /health`. Token checks are in `src/auth.py` (details in [`docs/auth_design.md`](docs/auth_design.md)); the table is created by `src/migrate.py` from plain SQL in `src/migrations/`.
+- **Web app** (`web/`): Vite + React 18 + TypeScript strict. Screens: login (redirects to Keycloak), chat (citations as links, refusal panel with route label), history with delete, and a header with the signed-in user and Sign out. A typed API client (`web/src/api.ts`) attaches the bearer token, checks response shapes at run time, and on a 401 sends you to sign in again.
 
 ## Results
 
@@ -108,49 +123,94 @@ Citation URL hit and citation support were 1.0 in every run. Against the first-r
 
 ## Run it
 
-Needs Python 3.11, [uv](https://docs.astral.sh/uv/), Docker, and a DeepSeek API key in `.env` (copy `.env.example`).
+### Full stack (web app, Keycloak, API, Postgres)
+
+Needs Docker with Compose v2 (I ran Docker 26.1.5 / Compose 2.26.1 with `sudo`). The page text, embedding cache and LLM cache must already be in `data/local/` (from the ingest step below); with `LLM_PROVIDER=cached` the API answers only from cached responses and needs no API key.
+
+```bash
+# On my machine the default bridge network doesn't work, so I use the host-network override:
+LLM_PROVIDER=cached sudo -E docker compose -f docker-compose.yml -f docker-compose.hostnet.yml up -d --build
+curl -s localhost:8000/health                       # public
+curl -si -X POST localhost:8000/ask -H 'Content-Type: application/json' \
+  -d '{"question": "What identification do I need to open a bank account in Canada?"}'   # 401
+```
+
+Then open <http://localhost:5173>, press **Sign in** and use `demo` / `demo-only-not-a-secret` (or `demo2` / `demo2-only-not-a-secret`). These are **demo credentials for local use only**, in [`keycloak/realm-newcomer.json`](keycloak/realm-newcomer.json). The Keycloak admin console is on <http://localhost:8080> as `admin` / `admin-demo-only`, also demo-only. Ports: web 5173, API 8000, Keycloak 8080, Postgres 5434 on the host in both modes.
+
+The plain file should work with `docker compose up --build` on a host where bridge networking works, but that is **not verified**: it could not network at all on my build box (see [`docs/docker_evidence.md`](docs/docker_evidence.md)).
+
+Integration checks against the running stack (no tokens are printed):
+
+```bash
+.venv/bin/python scripts/auth_integration.py                          # PKCE sign-in, 401/200, isolation, CORS
+uv run --no-project --with playwright python scripts/ui_check.py      # real UI in headless Chromium, screenshots to docs/
+```
+
+Results: [`docs/auth_evidence.md`](docs/auth_evidence.md).
+
+### Web app on its own (dev server)
+
+```bash
+cd web
+cp .env.example .env.local     # VITE_API_BASE_URL, VITE_OIDC_AUTHORITY, VITE_OIDC_CLIENT_ID
+npm ci
+npm run dev                    # http://localhost:5173 (stop the web container first; same port)
+npm run lint && npm run typecheck && npm test && npm run build
+```
+
+### Backend, evaluation and tests
+
+Needs Python 3.11, [uv](https://docs.astral.sh/uv/), Docker, and a DeepSeek API key in `.env` (copy `.env.example`) for live answers.
 
 ```bash
 uv sync --extra embed --extra dev
 docker run -d --name ndocs-pg -e POSTGRES_USER=rag -e POSTGRES_PASSWORD=rag -e POSTGRES_DB=rag \
   -p 5433:5432 pgvector/pgvector:pg16
 uv run python -m src.ingest --sizes 500          # fetch the 20 pages into data/local/, chunk, embed
+uv run python -m src.migrate                     # create question_history (idempotent)
 uv run python -m src.graph "Is there a waiting period for OHIP?"
 uv run python -m src.evaluate --split dev        # metrics with CIs into eval_runs/
 uv run pytest -q && uv run ruff check .
 ```
 
-Docker: `docker compose up --build` starts Postgres and the API on <http://localhost:8000>:
-
-```bash
-curl -s localhost:8000/health
-curl -s -X POST localhost:8000/ask -H 'Content-Type: application/json' \
-  -d '{"question": "How long can I drive in Ontario on a licence from another country?"}'
-```
-
-### Use the chat page
-
-With the API running (`uv run uvicorn src.api:app` locally, or Docker as below), open <http://localhost:8000/>. Type a question and press Enter, or tap one of the example chips. Citation numbers link to the official page each sentence came from, and the sources list under the answer shows the page, section and fetch date. Refusals (out of scope, needs a professional, unclear, could not find it) show in an amber panel with their route label. The top strip shows `/health`. The page is plain HTML, CSS and JavaScript in `src/static/`, served by FastAPI, with no build step and nothing loaded from other sites.
-
-![The chat page refusing an out-of-scope question](docs/frontend.png)
-
-White text on the orange buttons and on my own message bubbles measures at least 4.5:1 (WCAG AA for normal text). [`scripts/check_contrast.py`](scripts/check_contrast.py) renders the page in headless Chrome and compares white with the lightest pixel behind the text: the Ask button is 5.10:1 at 1280 px wide and 4.96:1 at 390 px (it was 1.60:1 and 1.56:1), and the user bubble is 5.73:1 (was 2.67:1).
-
-On my machine the default bridge network was broken, so I ran it with the host-network override: `docker compose -f docker-compose.yml -f docker-compose.hostnet.yml up` (details in [`docs/docker_evidence.md`](docs/docker_evidence.md)).
+The evaluation calls the agent directly, not the API, so it doesn't need a token. To call the API with no sign-in (local evaluation and CI only), start it with `AUTH_DISABLED=1`: every request then runs as the user `local-dev`. **It is off by default.** Without it, the API needs `OIDC_ISSUER` (and optionally `OIDC_AUDIENCE`, default `newcomer-api`, and `OIDC_JWKS_URL`), and it answers 503 if auth is on but not configured. `WEB_ORIGINS` sets the allowed CORS origins (comma-separated; `*` is refused).
 
 The test split is frozen: `python -m src.evaluate --split test` refuses to run without `--final`, and checks the file against `data/questions/test.sha256`.
 
+### The web app
+
+![Login screen](docs/web_login.png)
+
+![History: the caller's own questions, newest first, with delete](docs/web_history.png)
+
+The look carries over from the old static page: retro monospace headings, frosted-glass panels and tangerine gel buttons, in plain CSS (`web/src/app.css`). Citation numbers link to the official page each sentence came from. Refusals show in an amber panel with their route label. History lists only your own questions, newest first, 20 per page; each opens to the saved answer and can be deleted. On the old static page, white text on the Ask button measured 5.10:1 and the user bubble 5.73:1 ([`scripts/check_contrast.py`](scripts/check_contrast.py)). The React app reuses the same colours, but I did not re-measure it behind sign-in, so contrast there is **not verified**.
+
 ## Known limitations
 
-- **CI runs on cached responses, which proves less than it looks.** GitHub Actions lints, runs 30 unit tests, ingests 16 short fixture pages I wrote (paraphrases, not the official text), and replays the dev evaluation with cached embeddings and cached DeepSeek responses, failing below [`ci/thresholds.json`](ci/thresholds.json). That proves the whole pipeline runs and is deterministic, and that a change to retrieval, chunking or prompts is noticed: in [the degrade PR](https://github.com/AbhishekRamma/newcomer-docs-agent/pull/2) (top 5 → top 1) the gate went red. For the second round I rebuilt the caches with [`scripts/build_ci_cache.sh`](scripts/build_ci_cache.sh) and checked locally, with the CI settings, that the replay passes and that top-k 1 still fails the gate. It does **not** grade new model output: a changed prompt misses the cache and the agent refuses, so the gate goes red whether or not the change was good. Answer quality on the real pages comes only from local runs.
+- **CI runs on cached responses, which proves less than it looks.** GitHub Actions lints, runs the pytest suite (62 tests, including the history store against a Postgres service), ingests 16 short fixture pages I wrote (paraphrases, not the official text), and replays the dev evaluation with cached embeddings and cached DeepSeek responses, failing below [`ci/thresholds.json`](ci/thresholds.json). That proves the whole pipeline runs and is deterministic, and that a change to retrieval, chunking or prompts is noticed: in [the degrade PR](https://github.com/AbhishekRamma/newcomer-docs-agent/pull/2) (top 5 → top 1) the gate went red. For the second round I rebuilt the caches with [`scripts/build_ci_cache.sh`](scripts/build_ci_cache.sh) and checked locally, with the CI settings, that the replay passes and that top-k 1 still fails the gate. It does **not** grade new model output: a changed prompt misses the cache and the agent refuses, so the gate goes red whether or not the change was good. Answer quality on the real pages comes only from local runs.
 - **The questions were drafted by the agent from the sources.** All 70 questions, their expected routes, expected URLs and key facts were drafted by the agent from the sources, and every key fact was checked mechanically against the fetched pages. My own review of them is pending, so treat the question set as **not verified**.
 - **Rule-based scoring.** Key facts are matched as normalised strings (with alternatives), so a correct paraphrase can score as a miss (test-16 is one). Citation support is a lexical heuristic (≥60% of content words and every number present in the cited chunk), not an entailment model.
 - **The verify node caught nothing real on dev.** It triggered one retry in the baseline run, which was a false positive. I kept it because it is part of the design and it is cheap insurance, but on these 40 questions it did not earn its cost.
 - **Small samples.** n=22 answerable test questions gives CIs about ±16 points wide.
 - **The test set has been used twice.** Its second run scored changes aimed at failures the first run exposed, so it is no longer an independent held-out set.
+- **Not production-ready.** Keycloak runs in dev mode (`start-dev`) over plain http with an H2 database. The realm export holds demo passwords, and the admin password is a demo value in `docker-compose.yml`. Use it locally only.
+- **Auth checks were run on one machine, in one browser.** The scripted PKCE sign-in, 401/200, history isolation and CORS checks passed against the real stack, and so did a headless-Chromium sign-in, refresh and sign-out ([`docs/auth_evidence.md`](docs/auth_evidence.md)). Firefox, Safari, automatic silent renew at the 300 s expiry, and any non-localhost or TLS setup are **not verified**.
+- **The CI web jobs don't exercise Keycloak.** CI runs ESLint, `tsc --noEmit`, Vitest and a production build for `web/`, and pytest with locally generated RSA keys and a fake JWKS. The end-to-end sign-in only ran locally.
 - **Plain `docker compose up` did not work on my build box** (no container-to-container traffic or DNS on the bridge network); the host-network override did. Plain compose on another machine is not verified. The container also expects the pages already fetched into `data/local/`; a cold start fetches them with httpx, and Canada.ca sometimes blocks that (locally I fall back to headless Chrome, which the image doesn't include).
 - **Pages change.** Answers are only as current as the fetch date shown on every citation (2026-10-24).
 - **Spend figures are estimates** from token counts and DeepSeek's published prices, not a bill.
+
+## Security notes
+
+- **Not production-ready.** It is a local demo stack. The passwords in `keycloak/realm-newcomer.json` and `docker-compose.yml` are labelled demo credentials for local use. There are no other secrets in the repo: `web` is a public client, and the DeepSeek key stays in an untracked `.env`.
+- **Sign-in.** It uses Authorization Code + PKCE (S256 enforced on the client) with no implicit or password grants, and redirects only to `http://localhost:5173/*`.
+- **Token checks.** The API verifies the RS256 signature against the realm JWKS (cached), and checks the issuer, the audience (`newcomer-api`) and the expiry, with `sub` required. It never decodes a token without verifying it. `HS256` and `alg: none` are rejected. If Keycloak is unreachable, it returns 503 and doesn't let requests through. See [`docs/auth_design.md`](docs/auth_design.md), including what it does *not* check (revocation before expiry, roles, sender binding).
+- **Tokens in the browser** are kept in memory only, never in `localStorage` or `sessionStorage` (checked by a Vitest test and in the browser run). PKCE state sits in `sessionStorage` only across the redirect. A refresh signs you in again silently through Keycloak's session.
+- **Logs.** Tokens are never logged; only the rejection reason is, and a test checks it.
+- **CORS.** Only the origins in `WEB_ORIGINS` are allowed, and `*` is refused at start-up.
+- **Web server headers.** The nginx-served web app sends a strict CSP (`script-src 'self'`, `connect-src` limited to the API and Keycloak), plus `nosniff` and `no-referrer`. Model output is rendered as text, and only `http(s)` citation URLs become links.
+- **History isolation.** Every query filters on the token's `sub`, so another user's row returns 404, the same as a missing one.
+- **`AUTH_DISABLED=1`** turns all of this off and is for local evaluation and CI only. It defaults to off.
 
 ## Data and licence notes
 
@@ -158,3 +218,25 @@ The test split is frozen: `python -m src.evaluate --split test` refuses to run w
 - Canada.ca pages: reusable for non-commercial purposes with attribution and a link ([terms](https://www.canada.ca/en/transparency/terms.html)). ontario.ca pages: © King's Printer for Ontario; non-commercial reproduction allowed with credit and without changes ([copyright](https://www.ontario.ca/page/copyright-information)). Page-specific notices and Open Government Licence – Ontario labels were not checked page by page: **unverified**. See [`data/SOURCES.md`](data/SOURCES.md).
 - This is general information, not legal, tax or immigration advice, and it is not affiliated with any government.
 - Decisions, spend and what I'd change next: [`docs/journal.md`](docs/journal.md).
+
+### Licences of libraries added for the web app and auth
+
+I checked each from its installed package metadata (`node_modules/*/package.json`, Python `importlib.metadata`):
+
+| library | version | licence | used for |
+|---|---|---|---|
+| PyJWT | 2.15.1 | MIT | JWT signature and claim checks |
+| cryptography | 50.0.2 | Apache-2.0 OR BSD-3-Clause | RSA for PyJWT |
+| react, react-dom | 18.3.1 | MIT | UI |
+| oidc-client-ts | 3.5.0 | Apache-2.0 | OIDC / PKCE in the browser |
+| jwt-decode (dependency of oidc-client-ts) | 4.0.0 | MIT | (pulled in by oidc-client-ts) |
+| vite, @vitejs/plugin-react | 6.4.5, 4.7.0 | MIT | dev server and build |
+| typescript | 5.8.3 | Apache-2.0 | type checking |
+| vitest, jsdom | 3.2.7, 26.1.0 | MIT | tests |
+| @testing-library/react, dom, jest-dom, user-event | 16.3.3, 10.4.2, 6.9.1, 14.6.8 | MIT | component tests |
+| eslint, @eslint/js, typescript-eslint, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals | 9.39.5, 9.39.5, 8.72.0, 5.2.0, 0.5.7, 17.13.0 | MIT | lint |
+| @types/react, @types/react-dom, @types/node | 18.3.31, 18.3.7, 22.20.5 | MIT | types |
+| Keycloak image `quay.io/keycloak/keycloak:26.4` | 26.4 | Apache-2.0 | identity provider (run, not bundled) |
+| `nginxinc/nginx-unprivileged:1.27-alpine`, `node:22-alpine` | — | nginx: BSD-2-Clause; Node.js: MIT | web image build and serving |
+
+The production JavaScript bundle contains only MIT and Apache-2.0 code (react, react-dom, scheduler, loose-envify, js-tokens, oidc-client-ts, jwt-decode). Across all of `web/node_modules`, including dev tools, the licences are MIT, Apache-2.0, ISC, BSD-2/3-Clause, MIT-0, Python-2.0, CC-BY-4.0 (a data package) and BlueOak-1.0.0. None is copyleft. I wrote all the application code myself.

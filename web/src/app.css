@@ -110,14 +110,6 @@ body {
 .brand { font-size: 14px; letter-spacing: 0.04em; white-space: nowrap; }
 .menu { display: flex; gap: 14px; margin: 0; color: var(--ink-soft); }
 .spacer { flex: 1; }
-.health { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-soft); white-space: nowrap; }
-.health .dot { margin-right: 0; }
-.health .detail { margin-left: -8px; white-space: pre; }
-.health .dot { width: 9px; height: 9px; border-radius: 50%; background: #b9b0bf;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 0 0 1px rgba(36, 28, 43, 0.25); }
-.health.ok .dot { background: #3fb37f; box-shadow: 0 0 8px #3fb37f, inset 0 1px 1px #fff; }
-.health.warn .dot { background: #e6a23c; }
-.health.down .dot { background: #d64545; }
 
 /* ---------- window ---------- */
 .window {
@@ -242,7 +234,7 @@ h1 {
 
 @media (max-width: 600px) {
   body { padding: 56px 8px 16px; }
-  .menu, .health .detail { display: none; }
+  .who { display: none; }
   .menubar { padding: 0 12px; gap: 10px; }
   .window { padding: 0 16px 16px; border-radius: 18px; }
   .titlebar { margin: 0 -16px 14px; }
@@ -257,3 +249,41 @@ h1 {
   .glass, .glass-inset, .msg.bot .bubble { background: var(--cream); }
   .crt { display: none; }
 }
+
+/* ---------- added for the React app: tabs, user, sign-out, history ---------- */
+.tabs { display: flex; gap: 6px; margin-left: 8px; }
+.tabs button, .signout {
+  font: 600 13px/1 var(--pixel); color: var(--ink); cursor: pointer;
+  padding: 6px 12px; border-radius: 999px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.4));
+  border: 1px solid rgba(36, 28, 43, 0.2);
+  box-shadow: inset 0 1px 0 #fff;
+}
+.tabs button[aria-current="page"] {
+  color: #fff; border-color: #8a3216; background: linear-gradient(to bottom, #b4441f, #a83c1a);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.who { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-soft); white-space: nowrap; }
+.who .dot { width: 9px; height: 9px; border-radius: 50%; background: #3fb37f;
+  box-shadow: 0 0 8px #3fb37f, inset 0 1px 1px #fff; }
+.login-row { margin: 8px 0 4px; }
+.msg-error { padding: 10px 14px; border-radius: 12px; background: rgba(255, 205, 210, 0.75);
+  border: 1.5px solid rgba(143, 29, 44, 0.5); color: var(--error); }
+.empty, .count { color: var(--ink-soft); }
+.history { list-style: none; margin: 0 0 16px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.hist { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 16px;
+  background: var(--glass-strong); }
+.hist details { flex: 1; min-width: 0; }
+.hist summary { cursor: pointer; display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+.hist .q { font-weight: 600; overflow-wrap: anywhere; }
+.hmeta { display: inline-flex; gap: 10px; align-items: center; color: var(--ink-soft); font-size: 13px; }
+.tag.warn { background: #ffd2a8; color: var(--refuse); border-color: rgba(138, 59, 18, 0.4); }
+.hbody { margin-top: 10px; }
+.del {
+  position: relative; z-index: 1;
+  font: 600 12px/1 var(--pixel); cursor: pointer; padding: 7px 10px; border-radius: 999px;
+  color: var(--error); background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(143, 29, 44, 0.45);
+}
+.del:disabled { cursor: progress; opacity: 0.6; }
+.more { margin-top: 4px; }
+@media (max-width: 600px) { .tabs { margin-left: 0; } }
