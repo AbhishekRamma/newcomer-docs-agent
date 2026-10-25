@@ -22,6 +22,7 @@ jobs:
     env:
       DATABASE_URL: postgresql://rag:rag@localhost:5432/rag
       EMBED_PROVIDER: cached
+      RAG_TOP_K: "1"
       EMBED_CACHE_PATH: ci/fixtures/embed_cache.sqlite
       LLM_PROVIDER: cached
       LLM_CACHE_DIR: ci/fixtures/llm_cache
