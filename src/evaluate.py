@@ -229,16 +229,39 @@ def print_failures(rows: list[dict]) -> None:
         print(f"  {r['id']} ({r['category']}/{r['topic']}): {'; '.join(why)}")
 
 
+def _per_question(run: str) -> dict[str, dict]:
+    path = RUNS_DIR / run / "per_question.jsonl"
+    return {r["id"]: r for r in map(json.loads, path.read_text().splitlines())}
+
+
+def paired_diff_ci(a: str, b: str, metric: str, n: int = 10_000, seed: int = 42):
+    """Bootstrap CI of mean(b) - mean(a) over questions scored in both runs (paired by id)."""
+    pa, pb = _per_question(a), _per_question(b)
+    ids = sorted(i for i in pa if i in pb and isinstance(pa[i].get(metric), (int, float))
+                 and isinstance(pb[i].get(metric), (int, float)))
+    if not ids:
+        return None, None, 0
+    d = np.asarray([pb[i][metric] - pa[i][metric] for i in ids], dtype=float)
+    rng = np.random.default_rng(seed)
+    means = d[rng.integers(0, len(d), size=(n, len(d)))].mean(axis=1)
+    ci = [round(float(np.percentile(means, 2.5)), 4), round(float(np.percentile(means, 97.5)), 4)]
+    return round(float(d.mean()), 4), ci, len(ids)
+
+
 def compare(a: str, b: str) -> None:
     ma = json.loads((RUNS_DIR / a / "metrics.json").read_text())
     mb = json.loads((RUNS_DIR / b / "metrics.json").read_text())
-    print(f"{'metric':18s} {a[:24]:>24s} {b[:24]:>24s}   delta")
+    print(f"A = {a}\nB = {b}\n"
+          "(paired delta CI: 10,000 bootstrap resamples of question ids, seed 42)")
+    print(f"{'metric':18s} {'A':>8s} {'A 95% CI':>18s} {'B':>8s} {'B 95% CI':>18s}"
+          f" {'B-A (paired)':>13s} {'95% CI':>18s}  n")
     for m in METRICS:
         if m not in ma or m not in mb:
             continue
         va, vb = ma[m]["value"], mb[m]["value"]
-        d = f"{vb - va:+.3f}" if va is not None and vb is not None else "-"
-        print(f"{m:18s} {str(va):>24s} {str(vb):>24s}   {d}  (n={ma[m]['n']}/{mb[m]['n']})")
+        d, ci, n = paired_diff_ci(a, b, m)
+        print(f"{m:18s} {str(va):>8s} {str(ma[m].get('ci95')):>18s} {str(vb):>8s}"
+              f" {str(mb[m].get('ci95')):>18s} {str(d):>13s} {str(ci):>18s}  {n}")
 
 
 def gate(run_dir: Path, thresholds_path: str) -> int:
