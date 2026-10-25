@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"Ontario has removed the three-month wait, so there is no waiting period and eligible people are covered immediately once they qualify [s04-c500-000].\"}",
+ "usage": {
+  "prompt_tokens": 660,
+  "completion_tokens": 44,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 532
+ }
+}

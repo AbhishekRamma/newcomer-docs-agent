@@ -1,0 +1,26 @@
+# Dev retrieval only (n=28 answerable dev questions), page-level. Generated 2026-10-24T20:18:27-04:00 by: RAG_RERANK=<model> RAG_HYBRID=<0|1> python -m src.retrieve --split dev --k <k>
+# pool: hybrid=0 -> vector top 20 reranked; hybrid=1 -> union of vector top 20 and full-text top 20 reranked; model=none -> no reranker (hybrid=1 is RRF)
+model=none index=c500 hybrid=False k=1 n=28 recall@1=0.750 MRR=0.893
+model=none index=c500 hybrid=False k=3 n=28 recall@3=0.929 MRR=0.946
+model=none index=c500 hybrid=False k=5 n=28 recall@5=0.964 MRR=0.946
+model=none index=c500 hybrid=True k=1 n=28 recall@1=0.714 MRR=0.857
+model=none index=c500 hybrid=True k=3 n=28 recall@3=0.911 MRR=0.929
+model=none index=c500 hybrid=True k=5 n=28 recall@5=0.982 MRR=0.929
+model=cross-encoder/ms-marco-MiniLM-L-6-v2 index=c500 hybrid=False k=1 n=28 recall@1=0.732 MRR=0.893
+model=cross-encoder/ms-marco-MiniLM-L-6-v2 index=c500 hybrid=False k=3 n=28 recall@3=0.946 MRR=0.946
+model=cross-encoder/ms-marco-MiniLM-L-6-v2 index=c500 hybrid=False k=5 n=28 recall@5=1.000 MRR=0.946
+model=cross-encoder/ms-marco-MiniLM-L-6-v2 index=c500 hybrid=True k=1 n=28 recall@1=0.732 MRR=0.893
+model=cross-encoder/ms-marco-MiniLM-L-6-v2 index=c500 hybrid=True k=3 n=28 recall@3=0.946 MRR=0.946
+model=cross-encoder/ms-marco-MiniLM-L-6-v2 index=c500 hybrid=True k=5 n=28 recall@5=1.000 MRR=0.946
+model=mixedbread-ai/mxbai-rerank-xsmall-v1 index=c500 hybrid=False k=1 n=28 recall@1=0.714 MRR=0.857
+model=mixedbread-ai/mxbai-rerank-xsmall-v1 index=c500 hybrid=False k=3 n=28 recall@3=0.964 MRR=0.923
+model=mixedbread-ai/mxbai-rerank-xsmall-v1 index=c500 hybrid=False k=5 n=28 recall@5=0.982 MRR=0.923
+model=mixedbread-ai/mxbai-rerank-xsmall-v1 index=c500 hybrid=True k=1 n=28 recall@1=0.714 MRR=0.857
+model=mixedbread-ai/mxbai-rerank-xsmall-v1 index=c500 hybrid=True k=3 n=28 recall@3=0.964 MRR=0.923
+model=mixedbread-ai/mxbai-rerank-xsmall-v1 index=c500 hybrid=True k=5 n=28 recall@5=0.982 MRR=0.923
+model=BAAI/bge-reranker-base index=c500 hybrid=False k=1 n=28 recall@1=0.768 MRR=0.929
+model=BAAI/bge-reranker-base index=c500 hybrid=False k=3 n=28 recall@3=0.964 MRR=0.964
+model=BAAI/bge-reranker-base index=c500 hybrid=False k=5 n=28 recall@5=1.000 MRR=0.964
+model=BAAI/bge-reranker-base index=c500 hybrid=True k=1 n=28 recall@1=0.768 MRR=0.929
+model=BAAI/bge-reranker-base index=c500 hybrid=True k=3 n=28 recall@3=0.964 MRR=0.964
+model=BAAI/bge-reranker-base index=c500 hybrid=True k=5 n=28 recall@5=0.982 MRR=0.964

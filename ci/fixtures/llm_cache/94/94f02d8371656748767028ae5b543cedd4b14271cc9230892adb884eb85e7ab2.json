@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"Asks about a fee for an Ontario driver's licence knowledge test, a covered topic.\"}",
+ "usage": {
+  "prompt_tokens": 401,
+  "completion_tokens": 31,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 145
+ }
+}

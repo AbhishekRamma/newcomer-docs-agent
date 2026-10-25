@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"New residents with children under 19 apply for the Canada child benefit with form RC66, which also applies them for the groceries benefit [s16-c500-000]. Send the form by mail with proof of birth for each child [s16-c500-000]. Newcomers can apply for benefit payments before filing their first tax return using form RC151 or form RC66 [s10-c500-000].\"}",
+ "usage": {
+  "prompt_tokens": 787,
+  "completion_tokens": 96,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 659
+ }
+}

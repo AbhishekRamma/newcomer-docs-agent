@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"Several banks have agreed to offer a low-cost account that charges no more than $4 a month [s09-c500-000]. There is no minimum balance requirement for this kind of account [s09-c500-000].\"}",
+ "usage": {
+  "prompt_tokens": 679,
+  "completion_tokens": 58,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 551
+ }
+}

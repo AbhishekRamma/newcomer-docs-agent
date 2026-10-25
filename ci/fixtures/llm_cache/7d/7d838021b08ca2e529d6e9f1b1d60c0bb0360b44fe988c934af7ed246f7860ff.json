@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"Asks about applying for a federal benefit related to a first Canadian tax return and benefits, a covered topic.\"}",
+ "usage": {
+  "prompt_tokens": 411,
+  "completion_tokens": 35,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 155
+ }
+}

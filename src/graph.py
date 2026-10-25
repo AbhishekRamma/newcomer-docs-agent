@@ -11,7 +11,9 @@ from langgraph.graph import END, StateGraph
 
 from src import prompts
 from src.config import Settings, get_settings
+from src.embed import EmbeddingCacheMiss
 from src.llm import LLM, LLMCacheMiss
+from src.rerank import RerankCacheMiss
 from src.retrieve import Chunk, Retriever
 from src.textnorm import numbers_in
 
@@ -94,6 +96,60 @@ def rule_checks(draft: str, chunks: list[Chunk]) -> list[str]:
     if missing:
         problems.append("Numbers not found in the cited excerpts: " + ", ".join(missing) + ".")
     return problems
+
+
+SENT_SPLIT = re.compile(r"(?<=[.!?\]])\s+(?=[A-Z0-9])")
+_WORD = re.compile(r"[a-z0-9$%.]+")
+_FILLER = {"that", "this", "with", "from", "your", "have", "will", "must", "need", "also",
+           "they", "their", "there", "then", "when", "which", "were", "been", "into", "only",
+           "about", "after", "before", "more", "than", "some", "such", "each", "other"}
+
+
+def _sentence_terms(sentence: str) -> set[str]:
+    """Content words (6-char prefixes) plus every number, ignoring citations."""
+    text = CITE.sub(" ", sentence).lower()
+    terms = set()
+    for w in _WORD.findall(text):
+        w = w.strip(".")
+        if any(ch.isdigit() for ch in w):
+            terms.add(w)
+        elif len(w) > 3 and w not in _FILLER:
+            terms.add(w[:6])
+    return terms
+
+
+def drop_repeated_sentences(draft: str) -> str:
+    """Remove a sentence when every content word and number in it already appears in one
+    earlier sentence, moving its citations onto that sentence. Conservative on purpose: a
+    sentence that adds even one word or number is kept, so no fact can be lost."""
+    kept: list[list[str]] = []  # per line, sentences
+    seen: list[tuple[int, int, set[str]]] = []
+    for line in draft.split("\n"):
+        out: list[str] = []
+        for sent in SENT_SPLIT.split(line):
+            terms = _sentence_terms(sent)
+            dup = None
+            if len(terms) >= 3:
+                dup = next(((li, si) for li, si, t in seen if terms <= t), None)
+            if dup is None:
+                out.append(sent)
+                if terms:
+                    seen.append((len(kept), len(out) - 1, terms))
+                continue
+            li, si = dup
+            target = kept[li][si] if li < len(kept) else out[si]
+            have = set(CHUNK_ID.findall(target))
+            extra = "".join(f"[{i}]" for i in CHUNK_ID.findall(sent) if i not in have)
+            if extra:
+                stripped = target.rstrip()
+                end = stripped[-1:] if stripped[-1:] in ".!?" else ""
+                target = (stripped[:-1] + extra + end) if end else stripped + extra
+                if li < len(kept):
+                    kept[li][si] = target
+                else:
+                    out[si] = target
+        kept.append(out)
+    return "\n".join(" ".join(x) for x in kept).strip()
 
 
 class Agent:
@@ -181,7 +237,7 @@ class Agent:
             found = [i for i in CHUNK_ID.findall(m.group(1)) if i in by_id]
             return " ".join(f"[{i}]({by_id[i].url})" for i in found) if found else ""
 
-        text = CITE.sub(link, state["draft"])
+        text = CITE.sub(link, drop_repeated_sentences(state["draft"]))
         cits = [{"chunk_id": i, "url": by_id[i].url, "title": by_id[i].title,
                  "heading": by_id[i].heading, "fetched_at": by_id[i].fetched_at} for i in ids]
         return {"final": {**base, "answer": text, "refused": False, "refusal_reason": None,
@@ -204,8 +260,8 @@ class Agent:
     def ask(self, question: str) -> dict:
         try:
             state = self.graph.invoke({"question": question})
-        except LLMCacheMiss:
-            # Replay mode with a prompt that is not in the cache (e.g. code changed): fail safe.
+        except (LLMCacheMiss, EmbeddingCacheMiss, RerankCacheMiss):
+            # Replay mode with an input that is not in a cache (e.g. code changed): fail safe.
             return {"route": "error", "route_reason": "", "answer": NOT_FOUND, "refused": True,
                     "refusal_reason": "llm_cache_miss", "citations": [], "retrieved": [],
                     "disclaimer": DISCLAIMER, "verify_events": [], "attempts": 0,

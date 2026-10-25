@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"General factual question about OHIP residency requirements that official government pages answer.\"}",
+ "usage": {
+  "prompt_tokens": 404,
+  "completion_tokens": 27,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 148
+ }
+}

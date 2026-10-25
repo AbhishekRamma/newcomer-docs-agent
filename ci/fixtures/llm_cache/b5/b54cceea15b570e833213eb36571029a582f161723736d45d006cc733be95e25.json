@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"Yes. As a resident of Canada you report income from outside Canada that you earned after you arrived [s14-c500-000]. For the part of the year after you became a resident, you report your world income, including income from outside Canada [s11-c500-000]. Newcomers who arrived in 2025 file their 2025 return by April 30, 2026 [s14-c500-000][s10-c500-001].\"}",
+ "usage": {
+  "prompt_tokens": 764,
+  "completion_tokens": 108,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 636
+ }
+}

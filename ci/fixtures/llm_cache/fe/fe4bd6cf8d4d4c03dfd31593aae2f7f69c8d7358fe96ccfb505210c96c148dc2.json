@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"Asks which form to use for a federal benefit tied to filing a first Canadian tax return, a covered topic.\"}",
+ "usage": {
+  "prompt_tokens": 408,
+  "completion_tokens": 36,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 152
+ }
+}

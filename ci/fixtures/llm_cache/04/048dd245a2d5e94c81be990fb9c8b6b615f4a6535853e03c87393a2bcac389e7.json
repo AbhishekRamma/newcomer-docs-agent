@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"You must finish the graduated licensing steps within five years [s18-c500-000]. With a G1 you wait 12 months before the G2 road test, or eight months if you pass an approved driver education course [s18-c500-000][s19-c500-001]. Your blood alcohol level must be zero [s18-c500-001]. You cannot drive between midnight and 5 a.m. [s18-c500-001]. You cannot drive on 400 series highways, and a passenger with at least four years of driving experience must sit beside you [s18-c500-001].\"}",
+ "usage": {
+  "prompt_tokens": 666,
+  "completion_tokens": 138,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 538
+ }
+}

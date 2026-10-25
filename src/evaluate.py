@@ -13,6 +13,8 @@ Metrics (each reported with its sample size n and a bootstrap 95% CI):
 - citation_url_hit: the answer cites at least one expected URL (answered + answerable)
 - citation_support: every cited sentence passes a lexical support heuristic (answered)
 - refusal_accuracy: refused == (question should not be answered) (all questions)
+- repeat_free: no sentence mostly restates an earlier one (>= 80% of its content words; answered
+  questions; diagnostic only, a lexical heuristic that misses reworded repeats)
 """
 
 from __future__ import annotations
@@ -36,7 +38,7 @@ from src.textnorm import fact_present, normalize, numbers_in
 
 RUNS_DIR = ROOT / "eval_runs"
 METRICS = ["route_accuracy", "recall_at_k", "mrr", "fact_recall", "facts_all",
-           "citation_url_hit", "citation_support", "refusal_accuracy"]
+           "citation_url_hit", "citation_support", "refusal_accuracy", "repeat_free"]
 STOP = set("""about above after again against also because been before being below between
 both could does doing down during each from further have having here into itself just more
 most must only other over same should some such than that their them then there these they
@@ -90,6 +92,15 @@ def citation_support(answer: str, chunk_text: dict[str, str]) -> bool:
     return ok
 
 
+def has_repeat(answer: str, threshold: float = 0.8) -> bool:
+    """True if some sentence's content words are >= threshold covered by one earlier sentence
+    (it mostly restates it). A lexical heuristic: reworded repeats can slip through."""
+    clean = re.sub(r"\[[^\]]*\]\([^)]*\)|\[[^\]]*\]", "", answer)
+    sents = [_content_words(x) for x in re.split(r"(?<=[.!?])\s+|\n+", clean)]
+    sents = [w for w in sents if len(w) >= 3]
+    return any(len(b & a) / len(b) >= threshold for i, b in enumerate(sents) for a in sents[:i])
+
+
 def git_hash() -> str:
     try:
         return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT,
@@ -122,6 +133,7 @@ def score(q: dict, out: dict, retrieved, chunk_text: dict[str, str], k: int) -> 
                                                set(q["expected_source_urls"])))
     if not refused:
         r["citation_support"] = float(citation_support(out["answer"], chunk_text))
+        r["repeat_free"] = float(not has_repeat(out["answer"]))
     return r
 
 
@@ -222,6 +234,8 @@ def compare(a: str, b: str) -> None:
     mb = json.loads((RUNS_DIR / b / "metrics.json").read_text())
     print(f"{'metric':18s} {a[:24]:>24s} {b[:24]:>24s}   delta")
     for m in METRICS:
+        if m not in ma or m not in mb:
+            continue
         va, vb = ma[m]["value"], mb[m]["value"]
         d = f"{vb - va:+.3f}" if va is not None and vb is not None else "-"
         print(f"{m:18s} {str(va):>24s} {str(vb):>24s}   {d}  (n={ma[m]['n']}/{mb[m]['n']})")

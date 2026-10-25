@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"answerable\": true, \"answer\": \"A new resident without children applies with form RC151, or online through the CRA web form [s10-c500-000][s16-c500-000].\"}",
+ "usage": {
+  "prompt_tokens": 784,
+  "completion_tokens": 46,
+  "prompt_cache_hit_tokens": 128,
+  "prompt_cache_miss_tokens": 656
+ }
+}

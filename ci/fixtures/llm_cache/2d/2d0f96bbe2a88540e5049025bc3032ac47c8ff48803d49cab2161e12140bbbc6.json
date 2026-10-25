@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"General question about the deadline for filing a first Canadian income tax return.\"}",
+ "usage": {
+  "prompt_tokens": 403,
+  "completion_tokens": 27,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 147
+ }
+}

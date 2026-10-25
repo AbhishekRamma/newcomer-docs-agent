@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"Asks about OHIP health card renewal fees and processing time, a covered topic.\"}",
+ "usage": {
+  "prompt_tokens": 408,
+  "completion_tokens": 30,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 152
+ }
+}

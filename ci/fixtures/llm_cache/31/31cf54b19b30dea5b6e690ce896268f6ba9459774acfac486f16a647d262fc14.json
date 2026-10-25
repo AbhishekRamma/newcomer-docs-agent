@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"needs_professional\", \"reason\": \"Asks for personal legal strategy on a landlord dispute and what to argue in court, which is outside the covered newcomer topics and requires a legal professional.\"}",
+ "usage": {
+  "prompt_tokens": 409,
+  "completion_tokens": 45,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 153
+ }
+}

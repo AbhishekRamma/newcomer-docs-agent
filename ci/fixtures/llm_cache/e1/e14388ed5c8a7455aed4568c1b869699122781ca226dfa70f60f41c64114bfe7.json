@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"unclear\", \"reason\": \"The single word 'card' is too vague to determine which card or topic is being asked about.\"}",
+ "usage": {
+  "prompt_tokens": 388,
+  "completion_tokens": 32,
+  "prompt_cache_hit_tokens": 254,
+  "prompt_cache_miss_tokens": 134
+ }
+}

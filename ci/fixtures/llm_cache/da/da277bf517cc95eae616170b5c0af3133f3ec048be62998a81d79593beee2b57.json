@@ -1,0 +1,10 @@
+{
+ "served_model": "deepseek-flash",
+ "content": "{\"label\": \"in_scope\", \"reason\": \"General factual question about first Canadian tax return and related benefits for newcomers.\"}",
+ "usage": {
+  "prompt_tokens": 398,
+  "completion_tokens": 27,
+  "prompt_cache_hit_tokens": 256,
+  "prompt_cache_miss_tokens": 142
+ }
+}
