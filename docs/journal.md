@@ -174,6 +174,12 @@ Built on 2026-10-24 (America/Toronto) on the branch `feature/web-auth`. The brie
 
 **Not verified:** plain bridge-network Compose with the new services, Firefox and Safari, silent renew at the 300 s expiry, a TLS or non-localhost deployment, and the React app's colour contrast (the old page was measured; this one wasn't).
 
+## Gate thresholds review
+
+| # | decision | reason |
+|---|---|---|
+| 45 | I reviewed the stricter thresholds I raised in PR #5 and chose to **keep** them as they are in `ci/thresholds.json`: route 0.97, recall@5 0.95, MRR 0.97, fact recall 0.97, all key facts 0.96, citation URL hit 0.97, citation support 0.97, refusal accuracy 0.97 (raised from 0.95, 0.95, 0.95, 0.93, 0.92, 0.95, 0.95, 0.95) | CI passes on main with them, and a stricter gate guards against quiet regressions. If a legitimate change trips one, I'll lower that single threshold deliberately, in its own commit with the reason, rather than loosening the whole gate. They are calibrated for the CI replay on the fixture pages (`eval_runs/ci-dev`: recall@5 0.9821, every other metric 1.0), not for the full dev run on the real pages, where MRR is 0.9286 and would fail the 0.97 MRR line by design |
+
 ## How I'd improve this
 
 1. **A new held-out set.** This one has been scored twice and the second run measured fixes for its own documented failures. Any further claim needs fresh questions, written before looking at the system's answers.
