@@ -131,6 +131,49 @@ A single chat page at `/`, added after the backend was finished.
 - **Repeats.** The licence chip answer went from four sentences giving the 60-day rule to two that say different things (how long you can drive, and that you must switch after that). I checked this by reading the answer; the lexical `repeat_free` metric is only a rough guide.
 - Screenshots retaken (answer, refusal, 390 px phone); no console errors. Whether the page reads well with a real screen reader is not yet verified by me.
 
+## Web app and OIDC sign-in (third round)
+
+Built on 2026-10-24 (America/Toronto) on the branch `feature/web-auth`. The brief fixed the main choices: React 18 + TS strict + Vite, Keycloak with a public PKCE client, `oidc-client-ts` with in-memory tokens, PyJWT + cryptography with my own dependency, a plain-SQL migration, and the endpoint contract. Below are the decisions I made inside those limits.
+
+| # | decision | reason |
+|---|---|---|
+| 29 | Removed the static page (`src/static/`, its test) and serve the React app from its own nginx container on :5173 | the brief replaces the plain HTML page. A separate origin also makes CORS and the CSP real rather than theoretical |
+| 30 | Keycloak 26.4 in `start-dev --import-realm`, with `KC_HOSTNAME=http://localhost:8080` and a dynamic backchannel | the issuer must be the same URL for the browser and for the API's `iss` check, while the API fetches the JWKS over the internal network. Hence a separate `OIDC_JWKS_URL` |
+| 31 | An audience mapper on the `web` client puts `newcomer-api` in access tokens; the API requires that audience | Keycloak's default access-token `aud` is `account`. Requiring my own audience means tokens minted for other clients in the realm are refused, and ID tokens (`aud: web`) can't be used as access tokens |
+| 32 | **Two** demo users (`demo`, `demo2`) instead of the brief's one | step 6 needs a second user to show that history is isolated. Both have obviously-demo passwords and are labelled local-only |
+| 33 | Token checks: RS256 only, `kid` must be in the JWKS, required `exp`/`iat`/`iss`/`aud`/`sub`, 10 s leeway | the brief's list plus `sub` (the history key) and `iat`. An allow-list of one algorithm blocks the HS256 key-confusion and `alg: none` tricks, and unit tests cover both |
+| 34 | JWKS cached for 5 min, refetched on an unknown `kid` at most every 30 s, old keys kept if a refresh fails | handles key rotation without letting junk `kid`s turn the API into a Keycloak load generator |
+| 35 | Keycloak unreachable on the first JWKS fetch, or auth on with no issuer configured → **503**, not 401 | "the sign-in service is down" is not "your token is bad". It also fails closed: no request gets through unauthenticated |
+| 36 | `AUTH_DISABLED=1` runs every request as `local-dev`; off by default; the README says so | fixed by the brief. The eval calls the agent directly, so it doesn't even need the flag |
+| 37 | History table and index created by `src/migrate.py` from numbered `.sql` files, tracked in `schema_migrations` under a Postgres advisory lock | plain SQL as the brief asked. The lock means two API containers starting together can't race the migration |
+| 38 | History is paginated with `limit` (1–100, default 20) and `offset`, plus `total`; another user's row and a missing row both return 404 | 404 rather than 403 doesn't confirm that someone else's id exists |
+| 39 | Tokens in `InMemoryWebStorage`; PKCE state in `sessionStorage`; silent sign-in on load plus `automaticSilentRenew` through `silent-renew.html` | the brief rules out `localStorage`. Memory alone would mean signing in again on every refresh, so the Keycloak session cookie is used through a hidden iframe to get new tokens. Cost and caveats are in `docs/auth_design.md` |
+| 40 | Typed API client with run-time shape guards (`isAskResponse`, `isHistoryPage`) instead of casting `res.json()` | strict TS with no `any` is only honest if the network boundary is checked. A 401 or a missing token calls `onUnauthorized`, which starts a new sign-in |
+| 41 | ESLint 9 with typescript-eslint `strictTypeChecked`, `--max-warnings 0`; TS `exactOptionalPropertyTypes` and `noUncheckedIndexedAccess` | the strictest common settings. They found a needless type assertion and a hook exported from a component file |
+| 42 | nginx serves the built app with a CSP (`script-src 'self'`, `connect-src` = API + Keycloak, `frame-src` = self + Keycloak) | in-memory tokens are only as safe as the page is from XSS |
+| 43 | Integration check scripted twice: httpx doing the real PKCE login form (`scripts/auth_integration.py`), and Playwright on the real UI (`scripts/ui_check.py`) | the httpx script proves the API contract without a browser. Playwright proves the browser flow, the storage claims and silent sign-in |
+| 44 | CI: three separate jobs (`web-lint`, `web-typecheck`, `web-test` including a production build) on Node 22; pytest gets `REQUIRE_PG=1` so the Postgres history test can't skip quietly; thresholds unchanged | separate jobs name the failing check on the PR. Node 22 matches the web Dockerfile (I ran the checks locally on Node 20.19) |
+
+**Problems found on the way (all fixed):**
+
+- **Lint and type errors.** ruff B008 on `Depends(...)` defaults, fixed with `Annotated` aliases. `node:path` and `import.meta.dirname` were untyped, fixed by adding `@types/node`. ESLint `unbound-method` in a test, fixed with a standalone `vi.fn`.
+- **Scripted login returned 400** (`cookie_not_found` in Keycloak's log). Keycloak 26 sets its login-session cookies `Secure; SameSite=None` even on http://localhost. Browsers send them, because localhost counts as a secure context; httpx doesn't. The script now forwards them explicitly.
+- **The first scripted `/ask` came back as a 200 refusal** with reason `llm_cache_miss`: that question wasn't in the LLM cache, and the cached provider never calls the API. I switched to a dev-set question to keep spend at zero.
+- **Silent sign-in failed on reload**, with a CSP violation in the console. My own `frame-src` allowed Keycloak but not `'self'`, and the iframe lands on `/silent-renew.html`. I added `'self'`.
+- **PKCE state was in `localStorage`.** oidc-client-ts defaults the *state* store to `localStorage`. I had only set the user store. I set the state store to `sessionStorage` and added a test. No access token was ever stored there.
+
+**Checks (local, 2026-10-24, 22:09–22:16 EDT):**
+
+- pytest: 62 passed, with the Postgres test running against a real database. ruff is clean.
+- Vitest: 17 passed. ESLint and `tsc --noEmit` are clean, and `vite build` works.
+- Integration: all 12 pass/fail checks passed. Headless Chromium signed in, asked, showed history, re-signed silently on reload, and signed out ([`auth_evidence.md`](auth_evidence.md)).
+- Dev evaluation, `AUTH_DISABLED=1 LLM_PROVIDER=cached`, run `dev-c500-k5-hybrid-verify-v6-authcheck`: identical to `dev-c500-k5-hybrid-verify-v6` on every metric (route 1.0, recall@5 0.9821, MRR 0.9286, fact recall 1.0, all facts 1.0, citation URL hit 1.0, citation support 1.0, refusal 1.0). It made 99 cache hits, 0 misses and 0 live calls.
+- I passed `--gate ci/thresholds.json` to that local run by habit, and it reported FAIL on MRR (0.9286 < 0.97). That is expected and not new: the thresholds belong to the CI replay on the fixture pages (where MRR is 1.0, `eval_runs/ci-dev`), not to the real 20-page index, whose MRR has been 0.9286 since round one. I left the thresholds unchanged. The CI gate result is in the PR checks.
+
+**Spend:** $0. The ledger was byte-identical before and after this round (1,140 calls, $0.2968914 total).
+
+**Not verified:** plain bridge-network Compose with the new services, Firefox and Safari, silent renew at the 300 s expiry, a TLS or non-localhost deployment, and the React app's colour contrast (the old page was measured; this one wasn't).
+
 ## How I'd improve this
 
 1. **A new held-out set.** This one has been scored twice and the second run measured fixes for its own documented failures. Any further claim needs fresh questions, written before looking at the system's answers.
@@ -140,4 +183,5 @@ A single chat page at `/`, added after the backend was finished.
 5. **Questions.** Have a person review all 70 (still pending), and grow the test set: n=22 answerable gives ±16-point CIs.
 6. **Freshness.** A scheduled job that refetches pages, diffs the text and flags questions whose source chunks changed.
 7. **CI.** Add a small weekly live job on the fixtures, capped at a few cents, so prompt changes are graded instead of only detected.
-8. **Docker.** Test plain Compose on a second machine and include headless Chrome in the image so a cold start can fetch Canada.ca pages.
+8. **Auth.** Move to a backend-for-frontend with an httpOnly session cookie so tokens never reach JavaScript, add token revocation checks (introspection or short-lived tokens plus back-channel logout), and run Keycloak in production mode with TLS and a real database.
+9. **Docker.** Test plain Compose on a second machine and include headless Chrome in the image so a cold start can fetch Canada.ca pages.

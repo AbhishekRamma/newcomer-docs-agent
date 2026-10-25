@@ -32,9 +32,62 @@ jobs:
         run: uv sync --python 3.11 --extra dev --frozen
       - name: Lint
         run: uv run ruff check .
-      - name: Unit tests
+      - name: Unit tests (auth, history against the Postgres service, agent)
+        env:
+          REQUIRE_PG: "1"
         run: uv run pytest -q
       - name: Ingest fixture pages
         run: uv run python -m src.ingest --fixtures ci/fixtures/docs --sizes 500
       - name: Dev evaluation gate (cached LLM and embeddings)
         run: uv run python -m src.evaluate --split dev --name ci-replay --gate ci/thresholds.json
+
+  # Web app (web/): each check is its own job so a failure names itself on the PR.
+  web-lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - name: ESLint
+        run: npm run lint
+
+  web-typecheck:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - name: tsc --noEmit
+        run: npm run typecheck
+
+  web-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - name: Vitest
+        run: npm test
+      - name: Production build
+        run: npm run build
