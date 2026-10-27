@@ -13,7 +13,7 @@
     "embed_provider": "local",
     "llm_cache_dir": "ci/fixtures/llm_cache",
     "embed_cache_path": "ci/fixtures/embed_cache.sqlite",
-    "rerank_cache_path": "/workspace/newcomer-docs-agent/data/local/rerank_cache.sqlite"
+    "rerank_cache_path": "data/local/rerank_cache.sqlite"
   },
   "git_commit": "b80d6d7f27decf2d548121f99de528e0cd0c4a3d",
   "bootstrap": {

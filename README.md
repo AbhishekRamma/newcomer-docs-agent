@@ -214,6 +214,7 @@ The look carries over from the old static page: retro monospace headings, froste
 
 ## Data and licence notes
 
+- My code is under the MIT licence; see [`LICENSE`](LICENSE). The government pages it reads are not covered by it and keep their own terms (below).
 - No government page text is committed. The repo holds the URL list, my code, the questions, metric files without answer text, and CI fixtures I wrote myself (CC0). A pre-push script ([`scripts/prepush_scan.py`](scripts/prepush_scan.py)) checks every tracked file and the full `git log -p` for API keys and for any 12-word run copied from the fetched pages.
 - Canada.ca pages: reusable for non-commercial purposes with attribution and a link ([terms](https://www.canada.ca/en/transparency/terms.html)). ontario.ca pages: © King's Printer for Ontario; non-commercial reproduction allowed with credit and without changes ([copyright](https://www.ontario.ca/page/copyright-information)). Page-specific notices and Open Government Licence – Ontario labels were not checked page by page: **unverified**. See [`data/SOURCES.md`](data/SOURCES.md).
 - This is general information, not legal, tax or immigration advice, and it is not affiliated with any government.

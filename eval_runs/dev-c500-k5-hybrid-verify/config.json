@@ -10,8 +10,8 @@
     "model": "deepseek-flash",
     "llm_provider": "live",
     "embed_provider": "local",
-    "llm_cache_dir": "/workspace/newcomer-docs-agent/data/local/llm_cache",
-    "embed_cache_path": "/workspace/newcomer-docs-agent/data/local/embed_cache.sqlite"
+    "llm_cache_dir": "data/local/llm_cache",
+    "embed_cache_path": "data/local/embed_cache.sqlite"
   },
   "git_commit": "uncommitted",
   "bootstrap": {
