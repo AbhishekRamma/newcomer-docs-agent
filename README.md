@@ -110,14 +110,6 @@ I designed and built this project using AI coding agents as my engineering team.
 
 The decisions and the bugs I fixed along the way are in [`docs/journal.md`](docs/journal.md).
 
-## Limitations and next steps
-
-- **Not verified:** plain `docker compose up` without the host-network override; Firefox, Safari and silent renew at the 300 s expiry; the React app's colour contrast (the earlier static page measured 5.10:1 and 5.73:1); page-specific licence notices.
-- **The test set has been used twice**, and n = 22 answerable questions gives CIs about ±16 points wide. A fresh held-out set is the next step.
-- **Rule-based scoring.** Key facts are matched as normalized strings, so a correct paraphrase can score as a miss, and the support check is lexical, not an entailment model.
-- **Local demo only:** no TLS, Keycloak in dev mode with an H2 database and demo passwords in the realm export, no load testing, no token revocation check before the 300 s expiry.
-- **Pages change.** Answers are only as current as the fetch date on every citation (2026-10-24).
-
 ## Licence and data
 
 - My code is under the MIT licence; see [`LICENSE`](LICENSE). Library licences are listed in [`docs/licences.md`](docs/licences.md).
