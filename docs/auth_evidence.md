@@ -1,6 +1,6 @@
 # Auth evidence (2026-10-24, America/Toronto)
 
-What I ran against the real stack on my build box, and what came back. No tokens, cookies or
+What I ran against the real stack on my build machine, and what came back. No tokens, cookies or
 client secrets appear here (the `web` client is public and has none); the demo passwords are the
 labelled local-only ones in [`keycloak/realm-newcomer.json`](../keycloak/realm-newcomer.json).
 

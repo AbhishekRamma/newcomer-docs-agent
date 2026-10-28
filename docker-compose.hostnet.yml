@@ -1,4 +1,4 @@
-# Fallback for hosts where Docker's bridge network is broken (on my build box, containers
+# Fallback for hosts where Docker's bridge network is broken (on my build machine, containers
 # on the default compose network could not reach each other or resolve DNS).
 # Usage: docker compose -f docker-compose.yml -f docker-compose.hostnet.yml up
 # Every container shares the host's network: Postgres on 5434, the API on 8000, Keycloak on
