@@ -1,6 +1,6 @@
 # Docker evidence (2026-10-24, America/Toronto)
 
-Docker 26 with Compose 2.26.1, run with `sudo` on my build box.
+Docker 26 with Compose 2.26.1, run with `sudo` on my build machine.
 
 ## 1. Plain `docker compose up`: image builds, stack does not work on this host
 

@@ -18,7 +18,7 @@ from src.config import EMBED_DIM, EMBED_MODEL
 
 # bge v1.5 recommends this instruction for short retrieval queries (not for passages).
 QUERY_INSTRUCTION = "Represent this sentence for searching relevant passages: "
-BATCH_SIZE = 16  # small batches: the box has ~3 GB of free RAM
+BATCH_SIZE = 16  # small batches to keep memory use low
 
 
 class EmbeddingCacheMiss(RuntimeError):
